@@ -5,6 +5,7 @@ import {
 	StyleSheet,
 	TextInput,
 	Image,
+	Pressable,
 	TouchableOpacity,
 } from 'react-native';
 
@@ -28,35 +29,17 @@ export default function AddPlantsScreen({ navigation }) {
 			</View>
 
 			<View style={styles.buttonContainer}>
-				<TouchableOpacity
-					onPress={() => {
-						/* do this */
-					}}
-				>
-					<View style={styles.button}>
-						<Text style={styles.buttonText}>Add temperature sensor</Text>
-					</View>
-				</TouchableOpacity>
+				<Pressable style={styles.button}>
+					<Text style={styles.buttonText}>Add temperature sensor</Text>
+				</Pressable>
 
-				<TouchableOpacity
-					onPress={() => {
-						/* do this */
-					}}
-				>
-					<View style={styles.button}>
-						<Text style={styles.buttonText}>Add soil moisture sensor</Text>
-					</View>
-				</TouchableOpacity>
+				<Pressable style={styles.button}>
+					<Text style={styles.buttonText}>Add temperature sensor</Text>
+				</Pressable>
 
-				<TouchableOpacity
-					onPress={() => {
-						/* do this */
-					}}
-				>
-					<View style={styles.button}>
-						<Text style={styles.buttonText}>Add irrigator</Text>
-					</View>
-				</TouchableOpacity>
+				<Pressable style={styles.button}>
+					<Text style={styles.buttonText}>Add temperature sensor</Text>
+				</Pressable>
 
 				<Image
 					style={styles.doneImage}
@@ -71,8 +54,6 @@ const styles = StyleSheet.create({
 	inputContainer: {
 		flex: 1,
 		flexDirection: 'column',
-		paddingTop: 20,
-		paddingHorizontal: 16,
 		alignItems: 'center',
 		justifyContent: 'flex-start',
 	},
@@ -88,19 +69,19 @@ const styles = StyleSheet.create({
 		borderColor: '#ABB5BE',
 		width: '70%',
 		padding: 16,
-		marginBottom: 20,
+		marginBottom: 8,
 	},
 
 	addImage: {
-		width: 150,
-		height: 150,
+		width: 80,
+		height: 80,
+		marginTop: 20,
 	},
 
 	buttonContainer: {
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 20,
 		width: '100%',
 	},
 
@@ -108,22 +89,21 @@ const styles = StyleSheet.create({
 		backgroundColor: 'black',
 		alignItems: 'center',
 		justifyContent: 'center',
-		borderRadius: 8,
-
-		width: 400,
+		borderRadius: 64,
+		width: '70%',
 		marginTop: 40,
 		padding: 16,
 	},
 
 	buttonText: {
 		color: 'white',
-		fontSize: 20,
+		fontSize: 16,
 		fontWeight: 'bold',
 	},
 
 	doneImage: {
 		width: 80,
 		height: 80,
-		marginTop: 50,
+		marginTop: 20,
 	},
 });
