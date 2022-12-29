@@ -6,7 +6,6 @@ import {
 	TextInput,
 	Image,
 	Pressable,
-	TouchableOpacity,
 } from 'react-native';
 
 export default function AddPlantsScreen({ navigation }) {
@@ -34,7 +33,7 @@ export default function AddPlantsScreen({ navigation }) {
 				</Pressable>
 
 				<Pressable style={styles.button}>
-					<Text style={styles.buttonText}>Add temperature sensor</Text>
+					<Text style={styles.buttonText}>Add soil moisture</Text>
 				</Pressable>
 
 				<Pressable style={styles.button}>
