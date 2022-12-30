@@ -14,12 +14,12 @@ export default function AddPlantsScreen({ navigation }) {
 	return (
 		<View style={styles.inputContainer}>
 			<Image
-				style={styles.addImage}
-				source={require('../../assets/images/add-image-icon.png')}
+				style={styles.plantImage}
+				source={require('../../assets/images/daisy.png')}
 			/>
 
 			<View>
-				<Text style={styles.addImageText}>Add image</Text>
+				<Text style={styles.changeImageText}>Change image</Text>
 			</View>
 
 			<View style={styles.textInput}>
@@ -33,21 +33,21 @@ export default function AddPlantsScreen({ navigation }) {
 				<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 					<View style={styles.button}>
 						<Icon name='thermometer-1' size={25} style={styles.icon} />
-						<Text style={styles.buttonText}>Add temperature sensor</Text>
+						<Text style={styles.buttonText}>Temp_1</Text>
 					</View>
 				</TouchableOpacity>
 
 				<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 					<View style={styles.button}>
 						<Icon name='tint' size={25} style={styles.icon} />
-						<Text style={styles.buttonText}>Add soil moisture sensor</Text>
+						<Text style={styles.buttonText}>Humd_23</Text>
 					</View>
 				</TouchableOpacity>
 
 				<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 					<View style={styles.button}>
-						<Icon2 name='plus-a' size={15} style={styles.icon} />
-						<Text style={styles.buttonText}>Add irrigator</Text>
+						<Icon2 name='day-sunny' size={15} style={styles.icon} />
+						<Text style={styles.buttonText}>Sun_10</Text>
 					</View>
 				</TouchableOpacity>
 
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 	},
 
-	addImageText: {
+	changeImageText: {
 		fontSize: 24,
 		fontWeight: 'bold',
 		marginBottom: 30,
@@ -83,10 +83,11 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 	},
 
-	addImage: {
+	plantImage: {
 		width: 80,
 		height: 80,
 		marginTop: 20,
+		marginBottom: 10,
 	},
 
 	buttonContainer: {
