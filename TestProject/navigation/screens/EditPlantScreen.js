@@ -51,13 +51,6 @@ export default function AddPlantsScreen({ navigation }) {
 					</View>
 				</TouchableOpacity>
 
-				<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
-					<View style={styles.button}>
-						<Icon name='thermometer-1' size={25} style={styles.icon} />
-						<Text style={styles.buttonText}>Temp_1</Text>
-					</View>
-				</TouchableOpacity>
-
 				<Image
 					style={styles.doneImage}
 					source={require('../../assets/images/done-icon.png')}
