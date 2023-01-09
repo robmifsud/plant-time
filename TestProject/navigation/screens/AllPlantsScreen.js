@@ -4,10 +4,20 @@ import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
 import Icon3 from 'react-native-vector-icons/Feather';
+import firestore from '@react-native-firebase/firestore';
+import { ReactNativeFirebase } from '@react-native-firebase/app';
+import PlantComponent from '../../components/PlantComponent';
+
 
 export default function HomeScreen({ navigation }) {
+	const db = firestore();
+	const plants = db.collection('plants');
+	const plant = plants.doc('1');
+
 	return (
 		<ScrollView style={styles.containermain}>
+			<PlantComponent plant={plant} /> 
+
 			<View style={styles.section}>
 				<View style={styles.bottomcard}>
 					<View style={styles.upperbox}>
