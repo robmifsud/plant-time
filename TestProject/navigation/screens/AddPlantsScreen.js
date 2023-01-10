@@ -12,8 +12,10 @@ import { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import firestore from '@react-native-firebase/firestore';
+import { utils } from '@react-native-firebase/app';
 import { ReactNativeFirebase } from '@react-native-firebase/app';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 import { SelectList } from 'react-native-dropdown-select-list';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -21,7 +23,7 @@ export default function AddPlantsScreen({ navigation }) {
 	const [species, setSpecies] = useState([]);
 	const [plantName, setPlantName] = useState('');
 	const [plantImage, setPlantImage] = useState(null);
-	const [plantSpecies, setPlantSpecies] = useState("");
+	const [plantSpecies, setPlantSpecies] = useState('');
 
 	useEffect(() => {
 		const getSpecies = firestore()
@@ -65,7 +67,8 @@ export default function AddPlantsScreen({ navigation }) {
 	// }
 
 	const addPlant = async () => {
-		const documentRef = firestore().collection('plants').doc();
+		// Get plants collection from firestore and add new plant document to the collection
+		const documentRef = firestore().collection('plants');
 		const plant = {
 			plantName : plantName,
 			userId : auth().currentUser.uid,
@@ -74,8 +77,24 @@ export default function AddPlantsScreen({ navigation }) {
 			statusId : '/status/1'
 		}
 
-		await documentRef.set(plant);
-		console.log('Plant added to firestore: ', plant);
+		await documentRef.add(plant)
+		.then(async (docRef) =>{
+			console.log('Plant with id: ', docRef.id, ' added to firestore: ', plant);
+
+			const reference = storage().ref(docRef.id);
+
+			// uploads file
+			await reference.putFile(plantImage);
+
+			// Reset states
+			setPlantName('');
+			setPlantImage(null);
+			setPlantSpecies('');
+			setSpecies();
+		})
+		.catch((error) => {
+			console.error('Error adding plant: ', error);
+		});
 	}
 
 	return (
