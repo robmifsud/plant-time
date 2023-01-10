@@ -6,27 +6,80 @@ import {
 	TextInput,
 	Image,
 	TouchableOpacity,
+	Button
 } from 'react-native';
+import { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
+import firestore from '@react-native-firebase/firestore';
+import { ReactNativeFirebase } from '@react-native-firebase/app';
+import { SelectList } from 'react-native-dropdown-select-list';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function AddPlantsScreen({ navigation }) {
+	const [species, setSpecies] = useState([]);
+	const [plantName, setPlantName] = useState('');
+	const [plantImage, setPlantImage] = useState(null);
+	const [selected, setSelected] = useState("");
+
+	useEffect(() => {
+		const getSpecies = firestore()
+		.collection('species')
+		.onSnapshot(snapshot => {
+			let array = snapshot.docs.map(doc =>{
+				return {key : doc.ref.path, value : doc.data().speciesName}
+			})
+			const newItems = snapshot.docs.map(doc => {
+				let dict = doc.data();
+				dict.id = doc.ref.path;
+				return dict}
+			);
+        	setSpecies(array);
+		});
+
+		return () => getSpecies();
+    }, []);
+
+	async function uploadImage(){
+
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		console.log('Result: ', result);
+
+		if (!result.canceled) {
+			console.log("uri set: ", result.assets[0].uri);
+			setPlantImage(result.assets[0].uri);
+		  }
+	}
+
 	return (
+		
 		<View style={styles.inputContainer}>
-			<Image
-				style={styles.addImage}
-				source={require('../../assets/images/add-image-icon.png')}
-			/>
+			{ plantImage ? (
+					<Image
+						style={styles.addImage}
+						source={{uri: plantImage}}
+					/>
+                ) : (
+                    <Image
+						style={styles.addImage}
+						source={require('../../assets/images/add-image-icon.png')}
+					/>
+                )}
 
-			<View>
-				<Text style={styles.addImageText}>Add image</Text>
-			</View>
+			<Button style={styles.uploadImageButton} title='Upload Image' onPress={uploadImage}/>
 
 			<View style={styles.textInput}>
-				<TextInput placeholder='Name' fontSize={20} />
+				<TextInput placeholder='Name' fontSize={20} value={plantName} onChangeText={(plantName) => setPlantName(plantName)}/>
 			</View>
-			<View style={styles.textInput}>
-				<TextInput placeholder='Species' fontSize={20} />
+
+			<View style={styles.selectContainer}>
+				<SelectList data = {species} setSelected = {setSelected}/>
 			</View>
 
 			<View style={styles.buttonContainer}>
@@ -68,6 +121,21 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 	},
 
+	uploadImageButton: {
+		marginTop: 20,
+	},
+
+	selectContainer: {
+		marginTop: 20,
+		alignSelf: 'center',
+		width: '70%',
+		maxWidth: 600,
+	},
+
+	selectList:{
+		borderWidth: 3,
+	},
+
 	addImageText: {
 		fontSize: 24,
 		fontWeight: 'bold',
@@ -87,6 +155,7 @@ const styles = StyleSheet.create({
 		width: 80,
 		height: 80,
 		marginTop: 20,
+		marginBottom: 20
 	},
 
 	buttonContainer: {
