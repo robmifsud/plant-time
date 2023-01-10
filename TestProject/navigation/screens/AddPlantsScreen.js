@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import firestore from '@react-native-firebase/firestore';
 import { ReactNativeFirebase } from '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
 import { SelectList } from 'react-native-dropdown-select-list';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -20,7 +21,7 @@ export default function AddPlantsScreen({ navigation }) {
 	const [species, setSpecies] = useState([]);
 	const [plantName, setPlantName] = useState('');
 	const [plantImage, setPlantImage] = useState(null);
-	const [selected, setSelected] = useState("");
+	const [plantSpecies, setPlantSpecies] = useState("");
 
 	useEffect(() => {
 		const getSpecies = firestore()
@@ -57,6 +58,26 @@ export default function AddPlantsScreen({ navigation }) {
 		  }
 	}
 
+	// function addPlant(){
+	// 	console.log('Plant name: ', plantName);
+	// 	console.log('Plant species: ', plantSpecies);
+	// 	console.log('Plant image: ', plantImage);
+	// }
+
+	const addPlant = async () => {
+		const documentRef = firestore().collection('plants').doc();
+		const plant = {
+			plantName : plantName,
+			userId : auth().currentUser.uid,
+			speciesId : plantSpecies,
+			plantImage : plantImage,
+			statusId : '/status/1'
+		}
+
+		await documentRef.set(plant);
+		console.log('Plant added to firestore: ', plant);
+	}
+
 	return (
 		
 		<View style={styles.inputContainer}>
@@ -79,7 +100,7 @@ export default function AddPlantsScreen({ navigation }) {
 			</View>
 
 			<View style={styles.selectContainer}>
-				<SelectList data = {species} setSelected = {setSelected}/>
+				<SelectList data = {species} setSelected = {setPlantSpecies}/>
 			</View>
 
 			<View style={styles.buttonContainer}>
@@ -104,10 +125,12 @@ export default function AddPlantsScreen({ navigation }) {
 					</View>
 				</TouchableOpacity>
 
-				<Image
-					style={styles.doneImage}
-					source={require('../../assets/images/done-icon.png')}
-				/>
+				<TouchableOpacity onPress={addPlant} style={styles.buttonClickContain}>
+					<Image
+						style={styles.doneImage}
+						source={require('../../assets/images/done-icon.png')}
+					/>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);
