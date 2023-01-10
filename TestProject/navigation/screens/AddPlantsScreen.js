@@ -6,27 +6,120 @@ import {
 	TextInput,
 	Image,
 	TouchableOpacity,
+	Button
 } from 'react-native';
+import { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
+import firestore from '@react-native-firebase/firestore';
+import { utils } from '@react-native-firebase/app';
+import { ReactNativeFirebase } from '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
+import { SelectList } from 'react-native-dropdown-select-list';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function AddPlantsScreen({ navigation }) {
+	const [species, setSpecies] = useState([]);
+	const [plantName, setPlantName] = useState('');
+	const [plantImage, setPlantImage] = useState(null);
+	const [plantSpecies, setPlantSpecies] = useState('');
+
+	useEffect(() => {
+		const getSpecies = firestore()
+		.collection('species')
+		.onSnapshot(snapshot => {
+			let array = snapshot.docs.map(doc =>{
+				return {key : doc.ref.path, value : doc.data().speciesName}
+			})
+			const newItems = snapshot.docs.map(doc => {
+				let dict = doc.data();
+				dict.id = doc.ref.path;
+				return dict}
+			);
+        	setSpecies(array);
+		});
+
+		return () => getSpecies();
+    }, []);
+
+	async function uploadImage(){
+
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		console.log('Result: ', result);
+
+		if (!result.canceled) {
+			console.log("uri set: ", result.assets[0].uri);
+			setPlantImage(result.assets[0].uri);
+		  }
+	}
+
+	// function addPlant(){
+	// 	console.log('Plant name: ', plantName);
+	// 	console.log('Plant species: ', plantSpecies);
+	// 	console.log('Plant image: ', plantImage);
+	// }
+
+	const addPlant = async () => {
+		// Get plants collection from firestore and add new plant document to the collection
+		const documentRef = firestore().collection('plants');
+		const plant = {
+			plantName : plantName,
+			userId : auth().currentUser.uid,
+			speciesId : plantSpecies,
+			plantImage : plantImage,
+			statusId : '/status/1'
+		}
+
+		await documentRef.add(plant)
+		.then(async (docRef) =>{
+			console.log('Plant with id: ', docRef.id, ' added to firestore: ', plant);
+
+			const reference = storage().ref(docRef.id);
+
+			// uploads file
+			await reference.putFile(plantImage);
+
+			// Reset states
+			setPlantName('');
+			setPlantImage(null);
+			setPlantSpecies('');
+			setSpecies();
+		})
+		.catch((error) => {
+			console.error('Error adding plant: ', error);
+		});
+	}
+
 	return (
+		
 		<View style={styles.inputContainer}>
-			<Image
-				style={styles.addImage}
-				source={require('../../assets/images/add-image-icon.png')}
-			/>
+			{ plantImage ? (
+					<Image
+						style={styles.addImage}
+						source={{uri: plantImage}}
+					/>
+                ) : (
+                    <Image
+						style={styles.addImage}
+						source={require('../../assets/images/add-image-icon.png')}
+					/>
+                )}
 
-			<View>
-				<Text style={styles.addImageText}>Add image</Text>
-			</View>
+			<Button style={styles.uploadImageButton} title='Upload Image' onPress={uploadImage}/>
 
 			<View style={styles.textInput}>
-				<TextInput placeholder='Name' fontSize={20} />
+				<TextInput placeholder='Name' fontSize={20} value={plantName} onChangeText={(plantName) => setPlantName(plantName)}/>
 			</View>
-			<View style={styles.textInput}>
-				<TextInput placeholder='Species' fontSize={20} />
+
+			<View style={styles.selectContainer}>
+				<SelectList data = {species} setSelected = {setPlantSpecies}/>
 			</View>
 
 			<View style={styles.buttonContainer}>
@@ -51,10 +144,12 @@ export default function AddPlantsScreen({ navigation }) {
 					</View>
 				</TouchableOpacity>
 
-				<Image
-					style={styles.doneImage}
-					source={require('../../assets/images/done-icon.png')}
-				/>
+				<TouchableOpacity onPress={addPlant} style={styles.buttonClickContain}>
+					<Image
+						style={styles.doneImage}
+						source={require('../../assets/images/done-icon.png')}
+					/>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);
@@ -66,6 +161,21 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
+	},
+
+	uploadImageButton: {
+		marginTop: 20,
+	},
+
+	selectContainer: {
+		marginTop: 20,
+		alignSelf: 'center',
+		width: '70%',
+		maxWidth: 600,
+	},
+
+	selectList:{
+		borderWidth: 3,
 	},
 
 	addImageText: {
@@ -87,6 +197,7 @@ const styles = StyleSheet.create({
 		width: 80,
 		height: 80,
 		marginTop: 20,
+		marginBottom: 20
 	},
 
 	buttonContainer: {
