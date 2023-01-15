@@ -1,145 +1,46 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
-import Icon3 from 'react-native-vector-icons/Feather';
-import firestore from '@react-native-firebase/firestore';
-import { ReactNativeFirebase } from '@react-native-firebase/app';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { getFirestore, getDocs, collection } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 
 
 export default function HomeScreen({ navigation }) {
-	const db = firestore();
-	const plants = db.collection('plants');
-	const plant = plants.doc('1');
+	const [plantsRef, setPlantsRef] = useState([]);
+	
+	useEffect(() => {		
+		// Fetching data from firestore must be in async functino as useEffect method expects synchronous code
+		const fetchData = async() => {
+			const tempArray = [];
+			const db = getFirestore();
+			const querySnapshot = await getDocs(collection(db, 'plants'));
+			querySnapshot.forEach(doc => {
+				const dict = {
+					// id : doc.ref.path,
+					id : doc.id,
+					plantName : doc.get('plantName'),
+					plantImage : doc.get('plantImage'),
+					speciesId : doc.get('speciesId'),
+					statusId : doc.get('statusId'),
+					userId : doc.get('userId')
+				}
+				tempArray.push(dict)
+			})
 
+			setPlantsRef(tempArray);
+		}
+
+		fetchData();
+		
+	}, []);	
+	
 	return (
+
 		<ScrollView style={styles.containermain}>
-			<PlantComponent plant={plant} /> 
-
-			<View style={styles.section}>
-				<View style={styles.bottomcard}>
-					<View style={styles.upperbox}>
-						<Text style={styles.titlebox}>Daisy</Text>
-						<Icon3 style={styles.iconbox} name='smile' size={80} />
-					</View>
-					<View style={styles.lowerbox}>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='list' size={50} />
-								<Text style={styles.subtitlebox}>Details</Text>
-							</Pressable>
-						</View>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='pencil' size={50} />
-								<Text style={styles.subtitlebox}>Edit</Text>
-							</Pressable>
-						</View>
-					</View>
-				</View>
-			</View>
-
-			<View style={styles.section}>
-				<View style={styles.bottomcard}>
-					<View style={styles.upperbox}>
-						<Text style={styles.titlebox}>Lavendar</Text>
-						<Icon3 style={styles.iconbox} name='meh' size={80} />
-					</View>
-					<View style={styles.lowerbox}>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='list' size={50} />
-								<Text style={styles.subtitlebox}>Details</Text>
-							</Pressable>
-						</View>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='pencil' size={50} />
-								<Text style={styles.subtitlebox}>Edit</Text>
-							</Pressable>
-						</View>
-					</View>
-				</View>
-			</View>
-
-			<View style={styles.section}>
-				<View style={styles.bottomcard}>
-					<View style={styles.upperbox}>
-						<Text style={styles.titlebox}>Rose</Text>
-						<Icon3 style={styles.iconbox} name='frown' size={80} />
-					</View>
-					<View style={styles.lowerbox}>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='list' size={50} />
-								<Text style={styles.subtitlebox}>Details</Text>
-							</Pressable>
-						</View>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='pencil' size={50} />
-								<Text style={styles.subtitlebox}>Edit</Text>
-							</Pressable>
-						</View>
-					</View>
-				</View>
-			</View>
-
-			<View style={styles.section}>
-				<View style={styles.bottomcard}>
-					<View style={styles.upperbox}>
-						<Text style={styles.titlebox}>Sunflower</Text>
-						<Icon style={styles.iconbox} name='skull-outline' size={80} />
-					</View>
-					<View style={styles.lowerbox}>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='list' size={50} />
-								<Text style={styles.subtitlebox}>Details</Text>
-							</Pressable>
-						</View>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='pencil' size={50} />
-								<Text style={styles.subtitlebox}>Edit</Text>
-							</Pressable>
-						</View>
-					</View>
-				</View>
+			<View>
+				{plantsRef.map(item => {
+					return(<PlantComponent key={item.id} plant={item} />)
+				})}
 			</View>
 		</ScrollView>
 	);
