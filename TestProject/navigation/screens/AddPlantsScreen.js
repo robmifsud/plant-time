@@ -16,8 +16,8 @@ import Icon2 from 'react-native-vector-icons/Fontisto';
 import * as ImagePicker from 'expo-image-picker';
 import 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, getDocs, collection, addDoc} from 'firebase/firestore';
-import { getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getFirestore, getDocs, collection, addDoc, updateDoc, doc} from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function AddPlantsScreen({ navigation }) {
 	const [species, setSpecies] = useState([]);
@@ -64,7 +64,18 @@ export default function AddPlantsScreen({ navigation }) {
 		  xhr.open('GET', plantImage, true);
 		  xhr.send(null);
 		})
+
 		uploadBytes(ref(getStorage(),reference), blob)
+		.then(result =>{
+			// console.log('uploadBytes result: ', result.ref)	
+			getDownloadURL(result.ref)
+			.then(url => {
+				updateDoc(doc(getFirestore(),'plants',reference),{
+					plantImage : url
+				})
+			})
+			.catch(error => console.log('Error fetching img url after upload: ', error))
+		}) 
 	  }
 
 	const addPlant = async () => {
@@ -121,7 +132,7 @@ export default function AddPlantsScreen({ navigation }) {
 			</View>
 
 			<View style={styles.selectContainer}>
-				<SelectList data = {species} setSelected = {setPlantSpecies}/>
+				<SelectList data = {species} setSelected = {setPlantSpecies} placeholder = 'Select species'/>
 			</View>
 
 			<View style={styles.buttonContainer}>

@@ -8,8 +8,8 @@ import PlantComponent from '../../components/PlantComponent';
 export default function HomeScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
 	
-	useEffect(() => {		
-		// Fetching data from firestore must be in async functino as useEffect method expects synchronous code
+	useEffect(() => {
+		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
 		const fetchData = async() => {
 			const tempArray = [];
 			const db = getFirestore();
@@ -32,16 +32,14 @@ export default function HomeScreen({ navigation }) {
 
 		fetchData();
 		
-	}, []);	
+	})	
 	
 	return (
-
 		<ScrollView style={styles.containermain}>
-			<View>
-				{plantsRef.map(item => {
-					return(<PlantComponent key={item.id} plant={item} />)
-				})}
-			</View>
+			{plantsRef.map(item => {
+				return(<PlantComponent key={item.id} plant={item} />)
+			})}
+			<View style={styles.spacer}></View>
 		</ScrollView>
 	);
 }
@@ -138,9 +136,13 @@ const styles = StyleSheet.create({
 	containermain: {
 		flex: 1,
 		backgroundColor: 'white',
-		paddingTop: 40,
-		paddingBottom: 40,
+		paddingTop: 10,
+		// paddingBottom: 40,
+		// marginBottom: 40,
 		paddingLeft: 20,
 		paddingRight: 20,
+	},
+	spacer:{
+		height: 20,
 	},
 });
