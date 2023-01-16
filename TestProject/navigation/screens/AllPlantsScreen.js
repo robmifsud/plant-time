@@ -1,41 +1,56 @@
 import * as React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
 import { getFirestore, getDocs, collection } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 
 
 export default function HomeScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
+	const [refreshing, setRefreshing] = useState(false);
 	
-	useEffect(() => {
+	const fetchData = async() => {
 		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
-		const fetchData = async() => {
-			const tempArray = [];
-			const db = getFirestore();
-			const querySnapshot = await getDocs(collection(db, 'plants'));
-			querySnapshot.forEach(doc => {
-				const dict = {
-					// id : doc.ref.path,
-					id : doc.id,
-					plantName : doc.get('plantName'),
-					plantImage : doc.get('plantImage'),
-					speciesId : doc.get('speciesId'),
-					statusId : doc.get('statusId'),
-					userId : doc.get('userId')
-				}
-				tempArray.push(dict)
-			})
+		const tempArray = [];
+		const db = getFirestore();
+		const querySnapshot = await getDocs(collection(db, 'plants'));
+		querySnapshot.forEach(doc => {
+			const dict = {
+				// id : doc.ref.path,
+				id : doc.id,
+				plantName : doc.get('plantName'),
+				plantImage : doc.get('plantImage'),
+				speciesId : doc.get('speciesId'),
+				statusId : doc.get('statusId'),
+				userId : doc.get('userId')
+			}
+			tempArray.push(dict)
+		})
 
-			setPlantsRef(tempArray);
-		}
+		setPlantsRef(tempArray);
+	}
 
+	useEffect(() => {
 		fetchData();
-		
-	})	
+	}, [])	
+
+	const onRefresh = useCallback(() => {
+		setRefreshing(true);
+		fetchData()
+		.then(() => setRefreshing(false))
+		.catch(error =>{
+			console.log('Refresh error: ', error)
+			setRefreshing(false)
+		})
+	  }, []);
 	
 	return (
-		<ScrollView style={styles.containermain}>
+		<ScrollView 
+			style={styles.containermain}
+			refreshControl={
+				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+			}
+		>
 			{plantsRef.map(item => {
 				return(<PlantComponent key={item.id} plant={item} />)
 			})}

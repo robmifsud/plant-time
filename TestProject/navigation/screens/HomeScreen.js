@@ -1,40 +1,57 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable, ScrollView, RefreshControl } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
 import { getFirestore, getDocs, collection } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
+import { ref } from 'firebase/storage';
 
 export default function HomeScreen({ navigation }) {
 	const [plants, setPlants] = useState([]);
+	const [refreshing, setRefreshing] = useState(false);
+	
+	const fetchData = async() => {
+		const tempArray = [];
+		const db = getFirestore();
+		const querySnapshot = await getDocs(collection(db, 'plants'));
+		querySnapshot.forEach(doc => {
+			const dict = {
+				id : doc.id,
+				plantName : doc.get('plantName'),
+				plantImage : doc.get('plantImage'),
+				speciesId : doc.get('speciesId'),
+				statusId : doc.get('statusId'),
+				userId : doc.get('userId')
+			}
+			tempArray.push(dict)
+		})
+
+		setPlants(tempArray);
+	}
 
 	useEffect(() => {
-		const fetchData = async() => {
-			const tempArray = [];
-			const db = getFirestore();
-			const querySnapshot = await getDocs(collection(db, 'plants'));
-			querySnapshot.forEach(doc => {
-				const dict = {
-					id : doc.id,
-					plantName : doc.get('plantName'),
-					plantImage : doc.get('plantImage'),
-					speciesId : doc.get('speciesId'),
-					statusId : doc.get('statusId'),
-					userId : doc.get('userId')
-				}
-				tempArray.push(dict)
-			})
-
-			setPlants(tempArray);
-		}
-
 		fetchData();
-	})
+	}, [])
+
+	const onRefresh = useCallback(() => {
+		setRefreshing(true);
+		fetchData()
+		.then(() => setRefreshing(false))
+		.catch(error =>{
+			console.log('Refresh error: ', error)
+			setRefreshing(false)
+		})
+	  }, []);
 
 	return (
-		<ScrollView style={styles.containermain}>
+		<ScrollView 
+			style={styles.containermain}
+			refreshControl={
+				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+			}
+		>
 			<View style={styles.section}>
 				<Text style={styles.subtitle}>Notifications:</Text>
 				<View style={styles.notificationcard}>
@@ -61,7 +78,7 @@ export default function HomeScreen({ navigation }) {
 						<Text style={styles.subtitlebutton}>View All</Text>
 					</Pressable>
 				</View>
-				<View style={styles.bottomcard}>
+				{/* <View style={styles.bottomcard}>
 					<View style={styles.upperbox}>
 						<Text style={styles.titlebox}>Daisy</Text>
 						<Icon2 style={styles.iconbox} name='ghost' size={80} />
@@ -88,7 +105,7 @@ export default function HomeScreen({ navigation }) {
 							</Pressable>
 						</View>
 					</View>
-				</View>
+				</View> */}
 				{plants.map(item => {
 					return(<PlantComponent key={item.id} plant={item} />)
 				})}

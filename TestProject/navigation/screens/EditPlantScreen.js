@@ -13,10 +13,10 @@ import Icon2 from 'react-native-vector-icons/Fontisto';
 export default function AddPlantsScreen({ navigation }) {
 	return (
 		<View style={styles.inputContainer}>
-			<Image
+			{/* <Image
 				style={styles.plantImage}
 				source={require('../../assets/images/daisy.png')}
-			/>
+			/> */}
 
 			<View>
 				<Text style={styles.changeImageText}>Change image</Text>
