@@ -6,18 +6,18 @@ import {
 	TextInput,
 	Image,
 	TouchableOpacity,
-	Button
+	Button,
+	Alert
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
-import firestore from '@react-native-firebase/firestore';
-import { utils } from '@react-native-firebase/app';
-import { ReactNativeFirebase } from '@react-native-firebase/app';
-import auth from '@react-native-firebase/auth';
-import storage from '@react-native-firebase/storage';
-import { SelectList } from 'react-native-dropdown-select-list';
 import * as ImagePicker from 'expo-image-picker';
+import 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, getDocs, collection, addDoc, updateDoc, doc} from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function AddPlantsScreen({ navigation }) {
 	const [species, setSpecies] = useState([]);
@@ -26,25 +26,18 @@ export default function AddPlantsScreen({ navigation }) {
 	const [plantSpecies, setPlantSpecies] = useState('');
 
 	useEffect(() => {
-		const getSpecies = firestore()
-		.collection('species')
-		.onSnapshot(snapshot => {
-			let array = snapshot.docs.map(doc =>{
+		async function getSpecies() {
+			const db = getFirestore();
+			const querySnapshot = await getDocs(collection(db, "species"));
+			let array = querySnapshot.docs.map(doc =>{
 				return {key : doc.ref.path, value : doc.data().speciesName}
 			})
-			const newItems = snapshot.docs.map(doc => {
-				let dict = doc.data();
-				dict.id = doc.ref.path;
-				return dict}
-			);
-        	setSpecies(array);
-		});
-
-		return () => getSpecies();
+			setSpecies(array)
+		}
+		getSpecies();
     }, []);
 
-	async function uploadImage(){
-
+	async function addImage(){
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
@@ -52,49 +45,69 @@ export default function AddPlantsScreen({ navigation }) {
 			quality: 1,
 		});
 
-		console.log('Result: ', result);
-
 		if (!result.canceled) {
-			console.log("uri set: ", result.assets[0].uri);
 			setPlantImage(result.assets[0].uri);
 		  }
 	}
 
-	// function addPlant(){
-	// 	console.log('Plant name: ', plantName);
-	// 	console.log('Plant species: ', plantSpecies);
-	// 	console.log('Plant image: ', plantImage);
-	// }
+	const uploadImage = async (reference) => {
+		const blob = await new Promise((resolve, reject) => {
+		  const xhr = new XMLHttpRequest();
+		  xhr.onload = function() {
+			resolve(xhr.response);
+		  };
+		  xhr.onerror = function() {
+			reject(new TypeError('Network request failed'));
+		  };
+		  xhr.responseType = 'blob';
+		  
+		  xhr.open('GET', plantImage, true);
+		  xhr.send(null);
+		})
+
+		uploadBytes(ref(getStorage(),reference), blob)
+		.then(result =>{
+			// console.log('uploadBytes result: ', result.ref)	
+			getDownloadURL(result.ref)
+			.then(url => {
+				updateDoc(doc(getFirestore(),'plants',reference),{
+					plantImage : url
+				})
+			})
+			.catch(error => console.log('Error fetching img url after upload: ', error))
+		}) 
+	  }
 
 	const addPlant = async () => {
 		// Get plants collection from firestore and add new plant document to the collection
-		const documentRef = firestore().collection('plants');
 		const plant = {
 			plantName : plantName,
-			userId : auth().currentUser.uid,
+			userId : getAuth().currentUser.uid,
 			speciesId : plantSpecies,
-			plantImage : plantImage,
-			statusId : '/status/1'
+			plantImage : plantImage, // to remove?
+			statusId : '/status/2' // default status : good
 		}
 
-		await documentRef.add(plant)
-		.then(async (docRef) =>{
+		await addDoc(collection(getFirestore(), 'plants'), plant)
+		.then(docRef => {
 			console.log('Plant with id: ', docRef.id, ' added to firestore: ', plant);
 
-			const reference = storage().ref(docRef.id);
-
-			// uploads file
-			await reference.putFile(plantImage);
+			uploadImage(docRef.id)
 
 			// Reset states
 			setPlantName('');
 			setPlantImage(null);
 			setPlantSpecies('');
 			setSpecies();
+
+		}).catch(error => {
+			console.log('Error while saving plant to firestore: ', error);
+			Alert.alert(
+				'Error',
+				'Something went wrong while adding your plant, please try again',
+				[{text: 'Ok', style: 'cancel'}]
+			)
 		})
-		.catch((error) => {
-			console.error('Error adding plant: ', error);
-		});
 	}
 
 	return (
@@ -112,14 +125,14 @@ export default function AddPlantsScreen({ navigation }) {
 					/>
                 )}
 
-			<Button style={styles.uploadImageButton} title='Upload Image' onPress={uploadImage}/>
+			<Button style={styles.uploadImageButton} title='Upload Image' onPress={addImage}/>
 
 			<View style={styles.textInput}>
 				<TextInput placeholder='Name' fontSize={20} value={plantName} onChangeText={(plantName) => setPlantName(plantName)}/>
 			</View>
 
 			<View style={styles.selectContainer}>
-				<SelectList data = {species} setSelected = {setPlantSpecies}/>
+				<SelectList data = {species} setSelected = {setPlantSpecies} placeholder = 'Select species'/>
 			</View>
 
 			<View style={styles.buttonContainer}>

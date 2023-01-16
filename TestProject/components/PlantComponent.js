@@ -1,44 +1,56 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import styles from '../styles/styles';
+import { View, Text, StyleSheet, Pressable, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon3 from 'react-native-vector-icons/Feather';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';;
 
 const PlantComponent = (props) => {
-    const [plantName, setPlantName] = useState();
-    const [plant, setPlant] = useState(null);
-    // props.plant.get().then((documentSnapshot) => {
-    //     const tempPlantName = documentSnapshot.get('plantName');
-    //     // setPlantName(tempPlantName);
-    //     setPlant(documentSnapshot);
-    //     // console.log('Plant exists: ', documentSnapshot.exists);
-    // })
+    const [imageUrl, setImageUrl] = useState(null);
+    const [plant, setPlant] = useState({});
 
     useEffect(() => {
-        props.plant.get().then((documentSnapshot) => {
-            setPlant(documentSnapshot);
-            // console.log('Plant exists: ', documentSnapshot.exists);
-        })
-    }, []);
+        setPlant(props.plant);
+
+        const fetchImage = async() => {      
+            const reference = ref(getStorage(), plant.id);
+            await getDownloadURL(reference)
+            .then(url => {
+                console.log('Image url: ', url);
+                setImageUrl(url);
+            })
+            .catch(error => console.log('Errow while fetching image: ', error))
+        }
+
+        if (plant != {}){
+            // fetchImage();
+        }
+        
+    });
 
     return (
-        <View style={styles.section}>
+    // <View style={styles.section}>
+        
         <View style={styles.bottomcard}>
             <View style={styles.upperbox}>
                 { plant ? (
-                    <Text style={styles.titlebox}>{plant.get('plantName')}</Text>
+                    <Text style={styles.titlebox}>{plant.plantName}</Text>
 
                 ) : (
                     <Text style={styles.titlebox}>...</Text>
                 )}
-                {/* <Text style={styles.titlebox}>{plantName}</Text> */}
-                <Icon3 style={styles.iconbox} name='smile' size={80} />
+                
+                <Image 
+                    source={{uri: plant.plantImage}}
+                    style={styles.plantImg}
+                />
+                
+                {/* <Icon3 style={styles.iconbox} name='smile' size={80} /> */}
             </View>
             <View style={styles.lowerbox}>
                 <View>
                     <Pressable
-                        style={styles.box}
+                        style={styles.box} 
                         onPress={() => navigation.navigate('All Plants')}
                         android_ripple={{ borderless: true, radius: 20 }}
                     >
@@ -58,9 +70,114 @@ const PlantComponent = (props) => {
                 </View>
             </View>
         </View>
-    </View>
+    // </View>
     );
 
 };
 
 export default PlantComponent;
+
+const styles = StyleSheet.create({
+    plantImg : {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        margin: 10
+    },
+    subtitle: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        padding: 10,
+        paddingBottom: 0,
+        paddingLeft: 20,
+    },
+    subtitlebutton: {
+        paddingBottom: 0,
+        fontSize: 25,
+        fontWeight: 'bold',
+        padding: 10,
+    },
+    notification: {
+        fontSize: 18,
+        textDecorationLine: 'underline',
+        color: '#ffb74d',
+    },
+    notificationcard: {
+        backgroundColor: '#fcf8e3',
+        margin: 8,
+        borderColor: '#fbeed5',
+        borderWidth: 2,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    bottomcard: {
+        padding: 20,
+        marginTop: 10,
+        borderColor: '#fbeed5',
+        borderWidth: 2,
+        marginBottom: 10,
+    },
+    upperbox: {
+        alignItems: 'center',
+        paddingBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    iconbox: {
+        padding: 10,
+    },
+    lowerbox: {
+        borderColor: '#fbeed5',
+        borderTopWidth: 2,
+        paddingTop: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    box: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    subtitlebox: {
+        marginLeft: 10,
+        fontSize: 25,
+    },
+    titlebox: {
+        marginLeft: 10,
+        fontSize: 25,
+        fontWeight: 'bold',
+    },
+    flexrow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
+    icon: {
+        color: '#ffb74d',
+        marginRight: 10,
+    },
+    close: {
+        color: '#ffb74d',
+        textAlign: 'right',
+        padding: 10,
+    },
+    pressable: {
+        right: 0,
+    },
+    section: {
+        marginBottom: 10,
+    },
+    uppercard: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+    },
+    containermain: {
+        flex: 1,
+        backgroundColor: 'white',
+        paddingTop: 40,
+        paddingBottom: 40,
+        paddingLeft: 20,
+        paddingRight: 20,
+    },
+});

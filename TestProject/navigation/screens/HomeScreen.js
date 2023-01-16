@@ -1,12 +1,40 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
+import { getFirestore, getDocs, collection } from 'firebase/firestore';
+import PlantComponent from '../../components/PlantComponent';
 
 export default function HomeScreen({ navigation }) {
+	const [plants, setPlants] = useState([]);
+
+	useEffect(() => {
+		const fetchData = async() => {
+			const tempArray = [];
+			const db = getFirestore();
+			const querySnapshot = await getDocs(collection(db, 'plants'));
+			querySnapshot.forEach(doc => {
+				const dict = {
+					id : doc.id,
+					plantName : doc.get('plantName'),
+					plantImage : doc.get('plantImage'),
+					speciesId : doc.get('speciesId'),
+					statusId : doc.get('statusId'),
+					userId : doc.get('userId')
+				}
+				tempArray.push(dict)
+			})
+
+			setPlants(tempArray);
+		}
+
+		fetchData();
+	})
+
 	return (
-		<View style={styles.containermain}>
+		<ScrollView style={styles.containermain}>
 			<View style={styles.section}>
 				<Text style={styles.subtitle}>Notifications:</Text>
 				<View style={styles.notificationcard}>
@@ -61,8 +89,11 @@ export default function HomeScreen({ navigation }) {
 						</View>
 					</View>
 				</View>
+				{plants.map(item => {
+					return(<PlantComponent key={item.id} plant={item} />)
+				})}
 			</View>
-		</View>
+		</ScrollView>
 	);
 }
 

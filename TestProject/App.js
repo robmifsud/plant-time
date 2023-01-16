@@ -1,52 +1,50 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import MainContainer from './navigation/MainContainer';
-import auth from '@react-native-firebase/auth';
 import 'expo-dev-client';
-import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { useState, useEffect } from 'react';
+import * as Google from 'expo-auth-session/providers/google';
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
 
 function App(){
-  GoogleSignin.configure({
-    webClientId: '1059978339008-m5d4l8bv1hlgf3a20auu1i3orrqgpcmo.apps.googleusercontent.com',
+  initializeApp({
+    apiKey: "AIzaSyBHdOM8KSVqQpFdVqFDbMXh1O3DF0fwphw",
+    authDomain: "planttime-87863.firebaseapp.com",
+    projectId: "planttime-87863",
+    storageBucket: "planttime-87863.appspot.com",
+    messagingSenderId: "1059978339008",
+    appId: "1:1059978339008:web:991ab7113dca64dd218325",
+    measurementId: "G-61NH9WW1E4"
   });
 
-  // Set an initializing state whilst Firebase connects
-  const [initializing, setInitializing] = useState(true);
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    expoClientId: '1059978339008-m5d4l8bv1hlgf3a20auu1i3orrqgpcmo.apps.googleusercontent.com'
+  });
+
   const [user, setUser] = useState();
 
-  // Handle user state changes
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
-
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  }, []);
-
-  if (initializing) return null;
-
-  const onGoogleButtonPress = async () => {
-    // Check if your device supports Google Play
-    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    // Get the users ID token
-    const { idToken } = await GoogleSignin.signIn();
-  
-    // Create a Google credential with the token
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-  
-    // Sign-in the user with the credential
-    const user_sign_in = auth().signInWithCredential(googleCredential)
-    
-    user_sign_in.then((user) =>{
-      console.log(user);
+    onAuthStateChanged(getAuth(), (user) => {
+      setUser(user);
+      if(user){
+        console.log('User is logged in')
+      } else{
+        console.log('User is not logged in')
+      }
     })
-    .catch((error) => {
-      console.log(error);
-    })
-  }
+
+    if (response?.type === 'success') {
+      try {
+        const { id_token }  = response.params;
+        const auth = getAuth();
+        const credential = GoogleAuthProvider.credential(id_token);
+        signInWithCredential(auth, credential).catch(error => console.log('signInWithCredential Error: ', error));
+      } catch (error) {
+        console.log('Auth Try Catch error:', error);
+      }
+    }
+  }, [response]);
 
   const styles = StyleSheet.create({
     container: {
@@ -56,40 +54,27 @@ function App(){
       justifyContent: 'center',
     },
   });
-
   
-
   if(!user){
     return (
       <View style={styles.container}>
-        <GoogleSigninButton
-          style={{width:300, height: 65, marginTop:300, padding: 12}}
-          onPress={onGoogleButtonPress}
-        />
+        <Button
+          disabled={!request}
+          title="Login"
+          onPress={() => {
+            promptAsync();
+          }}
+          />
       </View>
     );
   }
-  // else
+
   return(
-    // <View style={styles.container}>
-    //   <View style={{marginTop:100, alignItems:'center'}}>
-    //     <Text style={styles.Text}> Welcome, {user.displayName}</Text>
-    //     <Image
-    //       source={{uri: user.photoURL}}
-    //       style={{height:300, width:300, borderRadius:150, margin:50}}
-    //     />
-    //   </View>
-    // </View>
     <MainContainer>
 
     </MainContainer>
   )
   
-  return(
-    <MainContainer>
-
-    </MainContainer>
-  );
 }
 
 export default App;
