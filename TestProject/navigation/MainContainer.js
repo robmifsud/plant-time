@@ -42,7 +42,7 @@ export default function MainContainer() {
 
 						return <Icon name={iconName} size={30} />;
 					},
-					tabBarStyle: { height: 60, paddingTop: 5 },
+					tabBarStyle: { height: 85, paddingTop: 5 },
 				})}
 				tabBarOptions={{
 					activeTintColor: 'tomato',
