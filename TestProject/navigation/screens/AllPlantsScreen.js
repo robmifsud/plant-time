@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
-import { getFirestore, getDocs, collection } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, query, where } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
-
+import { getAuth } from 'firebase/auth';
 
 export default function HomeScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
@@ -13,7 +13,8 @@ export default function HomeScreen({ navigation }) {
 		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
 		const tempArray = [];
 		const db = getFirestore();
-		const querySnapshot = await getDocs(collection(db, 'plants'));
+		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
+		// const querySnapshot = await getDocs(collection(db, 'plants'));
 		querySnapshot.forEach(doc => {
 			const dict = {
 				// id : doc.ref.path,

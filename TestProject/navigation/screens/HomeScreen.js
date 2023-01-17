@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
-import { getFirestore, getDocs, collection } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, where, query } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { ref } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 
 export default function HomeScreen({ navigation }) {
 	const [plants, setPlants] = useState([]);
@@ -15,7 +16,8 @@ export default function HomeScreen({ navigation }) {
 	const fetchData = async() => {
 		const tempArray = [];
 		const db = getFirestore();
-		const querySnapshot = await getDocs(collection(db, 'plants'));
+		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
+		// const querySnapshot = await getDocs(collection(db, 'plants'));
 		querySnapshot.forEach(doc => {
 			const dict = {
 				id : doc.id,
