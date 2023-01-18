@@ -289,10 +289,10 @@ export default function EditPlant({ navigation }){
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity onPress={updatePlant} style={styles.buttonClickContain}>
-						<Image
-							style={styles.doneImage}
-							source={require('../assets/images/done-icon.png')}
-						/>
+					<View style={styles.updateButton}>
+							<Icon2 name='check' size={15} style={styles.updateIcon} />
+							<Text style={styles.updateText}>Update Plant</Text>
+						</View>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
 		backgroundColor: '#3a5a40',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
-		borderRadius: 64,
+		borderRadius: 5,
 		width: 300,
 		padding: 12,
 		height: 55,
@@ -366,6 +366,34 @@ const styles = StyleSheet.create({
 
 	deleteButton: {
 		backgroundColor: '#b02121',
+	},
+
+	updateButton: {
+		flexDirection: 'row',
+		backgroundColor: '#fff',
+		height: 55,
+		shadowColor: "#000",
+		shadowOffset: {
+		  width: 0,
+		  height: 1,
+		},
+		shadowOpacity: 0.23,
+		shadowRadius: 2.62,
+		elevation: 10,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: 5,
+		width: 200,
+		padding: 12,
+		marginTop: 35,
+		marginTop: 35,
+		
+	},
+
+	updateText: {
+		color: 'black',
+		fontSize: 16,
+		fontWeight: 'bold',
 	},
 
 	buttonClickContain: {
@@ -453,5 +481,10 @@ const styles = StyleSheet.create({
 		color: 'white',
 		fontWeight: 'bold',
 		fontSize: 16
-	}
+	},
+	updateIcon: {
+		color: 'black',
+		marginLeft: 10,
+		marginRight: 30,
+	},
 });

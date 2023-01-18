@@ -250,10 +250,10 @@ export default function AddPlantsScreen({ navigation }) {
 						</View>
 					</TouchableOpacity> */}
 					<TouchableOpacity onPress={addPlant} style={styles.buttonClickContain}>
-						<Image
-							style={styles.doneImage}
-							source={require('../../assets/images/done-icon.png')}
-						/>
+					<View style={styles.submit}>
+							<Icon2 name='check' size={15} style={styles.submitIcon} />
+							<Text style={styles.submitText}>Submit Plant</Text>
+						</View>
 					</TouchableOpacity>
 				</View>
 			</View>
@@ -292,17 +292,17 @@ const styles = StyleSheet.create({
 	},
 
 	textInput: {
-		borderBottomWidth: 2,
+		borderBottomWidth: 1.5,
 		borderColor: '#ABB5BE',
-		padding: 16,
-		marginBottom: 8,
+		padding: 10,
+		marginBottom: 18,
 		width: '70%',
 	},
 
 	addImage: {
 		width: 80,
 		height: 80,
-		marginTop: 20,
+		marginTop: 40,
 		marginBottom: 20,
 	},
 
@@ -318,23 +318,60 @@ const styles = StyleSheet.create({
 
 	button: {
 		flexDirection: 'row',
+		backgroundColor: '#fff',
+		shadowColor: "#000",
+		shadowOffset: {
+		  width: 0,
+		  height: 1,
+		},
+		shadowOpacity: 0.23,
+		shadowRadius: 2.62,
+		
+		elevation: 10,
+		padding: 12,
+		borderRadius: 4,
+		marginTop: 16,
+		alignItems: 'center',
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+		borderRadius: 5,
+		width: 300,
+		height: 55, backgroundColor: '#fff'
+	},
+	
+	submit: {
+		flexDirection: 'row',
 		backgroundColor: '#3a5a40',
 		alignItems: 'center',
-		justifyContent: 'flex-start',
-		borderRadius: 64,
-		width: width * 0.7,
+		justifyContent: 'center',
+		borderRadius: 5,
+		width: 200,
 		padding: 12,
+		marginTop: 35,
+		marginTop: 35,
 		height: 55,
 	},
 
+	
+	submitText: {
+		color: 'white',
+		fontSize: 16,
+		fontWeight: 'regular',
+	},
+
+	submitIcon: {
+		color: 'white',
+		marginLeft: 10,
+		marginRight: 20,
+	},
 	buttonClickContain: {
 		marginBottom: 24,
 	},
 
 	buttonText: {
-		color: 'white',
+		color: 'black',
 		fontSize: 16,
-		fontWeight: 'bold',
+		fontWeight: 'regular',
 	},
 
 	doneImage: {
@@ -344,7 +381,7 @@ const styles = StyleSheet.create({
 	},
 
 	icon: {
-		color: 'white',
+		color: 'black',
 		marginLeft: 10,
 		marginRight: 20,
 	},
