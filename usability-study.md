@@ -12,13 +12,19 @@ PlantTime is plant monitoring application designed for users to monitor their pl
 
 2. Once extracted, open 'TestProject' with any IDE of your choice.
 
-3. Run this command in the terminal to install the required dependencies.
-
+3. If not already installed, install yarn and use it to install all the required dependencies
+```
+npm install --global yarn
+```
+```
+yarn
+```
+4. Alternatively you can use npm, however we recommend yarn as it tends to be faster.
 ```
 npm install
 ```
 
-4. Run this command in the terminal to execute the application.
+5. Run this command in the terminal to execute the application.
 
 ```
 npx expo start
@@ -28,7 +34,9 @@ npx expo start
 
 ## Instructions to test the core functionality of the application
 
-### 1. Login with your google account.
+### 1. Login with your Google account.
+
+Please tell the person overseeing your study your expo username, as we have to approve you in the Google console.
 
 ### 2. Adding a sample plant
 
