@@ -24,13 +24,15 @@ import {
     setDoc,
 	updateDoc,
 	doc,
+	deleteDoc
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import {useRoute} from "@react-navigation/native";
+import {useRoute, useNavigation} from "@react-navigation/native";
 
 export default function EditPlant({ navigation }){
     
     const route = useRoute();
+	const navigator = useNavigation();
     
     const { ogPlant } = route.params;
     
@@ -147,6 +149,27 @@ export default function EditPlant({ navigation }){
         }
 	};
 
+	const deletePlant = async() =>{
+		const db = getFirestore();
+		deleteDoc(doc(db,'plants',ogPlant.id))
+		.then(() =>{
+			Alert.alert(
+				'Success!',
+				'This plant has been deleted. ',
+				[{ text: 'Ok', style: 'default' }]
+			);
+			navigator.goBack();
+		})
+		.catch(error =>{
+			console.log('Could not delete plant with id: ', ogPlant.id, ' error: ', error);
+			Alert.alert(
+				'Error!',
+				'Something went wrong while deleting your plant, please try again.',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+		})
+	}
+
     return (
         <ScrollView>
 			<View style={styles.inputContainer}>
@@ -182,12 +205,6 @@ export default function EditPlant({ navigation }){
 				<View style={styles.buttonContainer}>
 					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 						<View style={styles.button}>
-							<Icon name='thermometer-1' size={25} style={styles.icon} />
-							<Text style={styles.buttonText}>Add temperature sensor</Text>
-						</View>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
-						<View style={styles.button}>
 							<Icon name='tint' size={25} style={styles.icon} />
 							<Text style={styles.buttonText}>Add soil moisture sensor</Text>
 						</View>
@@ -196,6 +213,12 @@ export default function EditPlant({ navigation }){
 						<View style={styles.button}>
 							<Icon2 name='plus-a' size={15} style={styles.icon} />
 							<Text style={styles.buttonText}>Add irrigator</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={deletePlant} style={styles.buttonClickContain}>
+						<View style={[styles.button, styles.deleteButton]}>
+							<Icon name='trash' size={25} style={styles.icon} />
+							<Text style={styles.buttonText}>Delete Plant</Text>
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity onPress={updatePlant} style={styles.buttonClickContain}>
@@ -272,6 +295,10 @@ const styles = StyleSheet.create({
 		width: 300,
 		padding: 12,
 		height: 55,
+	},
+
+	deleteButton: {
+		backgroundColor: '#b02121',
 	},
 
 	buttonClickContain: {

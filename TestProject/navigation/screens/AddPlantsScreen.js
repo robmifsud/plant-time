@@ -72,7 +72,6 @@ export default function AddPlantsScreen({ navigation }) {
 			};
 			xhr.responseType = 'blob';
 
-			console.log('Confirm uri: ', plantImage);
 			xhr.open('GET', plantImage, true);
 			xhr.send(null);
 		});
