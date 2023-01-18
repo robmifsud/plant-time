@@ -20,38 +20,74 @@ import {
 	Paragraph,
 	LeftContent,
 	Button,
-} from 'react-native-paper'
+} from 'react-native-paper';
 
 const { width, height } = Dimensions.get('window');
 const PlantComponent = (props) => {
 	const [imageUrl, setImageUrl] = useState(null);
 	const [plant, setPlant] = useState({});
-    const navigation = useNavigation();
+	const navigation = useNavigation();
 
-    useEffect(() => {
-        setPlant(props.plant);
-    });
+	useEffect(() => {
+		setPlant(props.plant);
+	});
 
-    const editPlant = () => {
-        navigation.push('Edit Plant', {
-            ogPlant: plant,
-        });
-    }
+	const editPlant = () => {
+		navigation.push('Edit Plant', {
+			ogPlant: plant,
+		});
+	};
 
 	return (
 		<View style={styles.bottomcard}>
-			<Card style={{ backgroundColor: '#3a5a40' }}>
-				<Card.Cover source={{ uri: plant.plantImage }} />
-				{plant ? (
-					<Text style={styles.titlebox}>{plant.plantName}</Text>
-				) : (
-					<Text style={styles.titlebox}>...</Text>
-				)}
-
-				<Card.Actions>
-					<Icon name='pencil' color='white' size={30} onPress={editPlant} />
-					<Icon name='list' color='white' size={30} />
-				</Card.Actions>
+			<Card
+				style={{
+					backgroundColor: '#3a5a40',
+					shadowColor: 'black',
+					shadowOffset: {
+						width: 0,
+						height: 1,
+					},
+					shadowOpacity: 0.23,
+					shadowRadius: 2.62,
+				}}
+			>
+				<Card.Cover
+					source={{ uri: plant.plantImage }}
+					style={{
+						borderBottomEndRadius: 0,
+						borderBottomLeftRadius: 0,
+						backgroundColor: 'white',
+					}}
+				/>
+				<View
+					style={{
+						flex: 1,
+						flexDirection: 'row',
+						flexWrap: 'wrap',
+						justifyContent: 'space-between',
+						width: '100%',
+					}}
+				>
+					<View style={styles.textContainer}>
+						{plant ? (
+							<Text style={styles.titlebox}>{plant.plantName}</Text>
+						) : (
+							<Text style={styles.titlebox}>...</Text>
+						)}
+					</View>
+					<View style={styles.iconContainer}>
+						<Pressable
+							style={{ marginTop: 4 }}
+							android_ripple={{ borderless: true, radius: 20 }}
+						>
+							<Icon name='pencil' color='white' size={25} onPress={editPlant} />
+						</Pressable>
+						<Pressable style={styles.box} android_ripple={{ borderless: true, radius: 20 }}>
+							<Icon name='list' color='white' size={35} />
+						</Pressable>
+					</View>
+				</View>
 			</Card>
 		</View>
 	);
@@ -60,6 +96,16 @@ const PlantComponent = (props) => {
 export default PlantComponent;
 
 const styles = StyleSheet.create({
+	textContainer: {
+		padding: 16,
+	},
+
+	iconContainer: {
+		flexDirection: 'row',
+		padding: 12,
+	},
+
+	// Unused
 	buttonContainer: {
 		flexDirection: 'column',
 		justifyContent: 'flex-end',
@@ -133,9 +179,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	box: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginLeft: 10,
+		// flexDirection: 'row',
+		// alignItems: 'center',
+		marginLeft: 12,
+		// marginRight: 1,
 	},
 	subtitlebox: {
 		marginLeft: 10,
@@ -144,11 +191,11 @@ const styles = StyleSheet.create({
 		//borderColor: 'green',
 	},
 	titlebox: {
-		marginLeft: 20,
 		fontSize: 18,
 		fontWeight: '600',
 		//borderWidth: 1,
-		marginTop: 10,
+		//marginTop: 25,
+		//marginBottom: 5,
 		color: 'white',
 	},
 	flexrow: {
@@ -156,10 +203,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 10,
 	},
-	icon: {
-		color: '#ffb74d',
-		marginRight: 10,
-	},
+
 	close: {
 		color: '#ffb74d',
 		textAlign: 'right',

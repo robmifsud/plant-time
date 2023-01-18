@@ -20,7 +20,7 @@ import {
 } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,8 +32,13 @@ export default function HomeScreen({ navigation }) {
 	const fetchData = async () => {
 		const tempArray = [];
 		const db = getFirestore();
-		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
-		querySnapshot.forEach(doc => {
+		const querySnapshot = await getDocs(
+			query(
+				collection(db, 'plants'),
+				where('userId', '==', getAuth().currentUser.uid)
+			)
+		);
+		querySnapshot.forEach((doc) => {
 			const dict = {
 				id: doc.id,
 				plantName: doc.get('plantName'),
@@ -48,7 +53,7 @@ export default function HomeScreen({ navigation }) {
 		setPlants(tempArray);
 	};
 
-	useEffect(() =>{
+	useEffect(() => {
 		fetchData();
 	}, []);
 
@@ -58,16 +63,16 @@ export default function HomeScreen({ navigation }) {
 			fetchData();
 		});
 		return unsubscribe;
-	}, [navigator])
+	}, [navigator]);
 
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
 		fetchData()
-		.then(() => setRefreshing(false))
-		.catch(error =>{
-			console.log('Refresh error: ', error)
-			setRefreshing(false)
-		})
+			.then(() => setRefreshing(false))
+			.catch((error) => {
+				console.log('Refresh error: ', error);
+				setRefreshing(false);
+			});
 	}, []);
 
 	return (
@@ -95,7 +100,7 @@ export default function HomeScreen({ navigation }) {
 			</View>
 			<View style={styles.section}>
 				<View style={styles.uppercard}>
-					<Text style={styles.subtitle}>Plants</Text>
+					<Text style={styles.subtitle}>Your Plants:</Text>
 					<Pressable
 						onPress={() => navigation.navigate('AllPlantsStack')}
 						android_ripple={{ borderless: true, radius: 20 }}
@@ -146,12 +151,11 @@ const styles = StyleSheet.create({
 		padding: 10,
 		paddingBottom: 0,
 		paddingLeft: 20,
-		
 	},
 	subtitlebutton: {
 		paddingBottom: 0,
 		fontSize: 20,
-		fontWeight: '',
+		fontWeight: '600',
 		padding: 10,
 	},
 	notification: {
@@ -174,7 +178,6 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		borderColor: '#fbeed5',
 		borderWidth: 2,
-		
 	},
 	upperbox: {
 		alignItems: 'center',
@@ -191,23 +194,19 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		
 	},
 	box: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		
 	},
 	subtitlebox: {
 		marginLeft: 10,
 		fontSize: 25,
-		
 	},
 	titlebox: {
 		marginLeft: 10,
 		fontSize: 35,
 		fontWeight: 'bold',
-		
 	},
 	flexrow: {
 		flexDirection: 'row',
@@ -233,6 +232,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		flexDirection: 'row',
 		alignItems: 'flex-end',
+		marginBottom: 20,
 	},
 	containermain: {
 		flexGrow: 1,
