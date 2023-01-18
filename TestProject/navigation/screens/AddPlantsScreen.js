@@ -9,6 +9,7 @@ import {
 	Button,
 	Alert,
 	ScrollView,
+	Dimensions,
 } from 'react-native';
 import { useState, useEffect, use } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -27,6 +28,8 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import sampleImage from '../../assets/iconPlant.png'
+
+const { width, height } = Dimensions.get('window');
 
 export default function AddPlantsScreen({ navigation }) {
 	const [species, setSpecies] = useState([]);
@@ -192,7 +195,7 @@ export default function AddPlantsScreen({ navigation }) {
 
 const styles = StyleSheet.create({
 	inputContainer: {
-		flex: 1,
+		flexGrow: 1,
 		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
@@ -239,8 +242,10 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: '100%',
-		marginTop: 50,
+		width: width * 1,
+		// borderColor: 'red',
+		// borderWidth: 1,
+		marginTop: height * 0.04,
 	},
 
 	button: {
@@ -249,7 +254,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'flex-start',
 		borderRadius: 64,
-		width: 300,
+		width: width * 0.7,
 		padding: 12,
 		height: 55,
 	},
@@ -273,7 +278,7 @@ const styles = StyleSheet.create({
 	icon: {
 		color: 'white',
 		marginLeft: 10,
-		marginRight: 30,
+		marginRight: 20,
 	},
 	spacer: {
 		height:300

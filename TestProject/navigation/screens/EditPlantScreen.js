@@ -5,7 +5,7 @@ import {
 	StyleSheet,
 	TextInput,
 	Image,
-	TouchableOpacity,
+    TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';

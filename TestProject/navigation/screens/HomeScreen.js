@@ -1,40 +1,56 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, RefreshControl } from 'react-native';
+import {
+	View,
+	Text,
+	StyleSheet,
+	Pressable,
+	ScrollView,
+	RefreshControl,
+	Dimensions,
+} from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
-import { getFirestore, getDocs, collection, where, query } from 'firebase/firestore';
+import {
+	getFirestore,
+	getDocs,
+	collection,
+	where,
+	query,
+} from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
 import { useNavigation } from "@react-navigation/native";
+
+const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
 	const [plants, setPlants] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const navigator = useNavigation();
-	
-	const fetchData = async() => {
+
+	const fetchData = async () => {
 		const tempArray = [];
 		const db = getFirestore();
 		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
 		querySnapshot.forEach(doc => {
 			const dict = {
-				id : doc.id,
-				plantName : doc.get('plantName'),
-				plantImage : doc.get('plantImage'),
-				speciesId : doc.get('speciesId'),
-				statusId : doc.get('statusId'),
-				userId : doc.get('userId')
-			}
-			tempArray.push(dict)
-		})
+				id: doc.id,
+				plantName: doc.get('plantName'),
+				plantImage: doc.get('plantImage'),
+				speciesId: doc.get('speciesId'),
+				statusId: doc.get('statusId'),
+				userId: doc.get('userId'),
+			};
+			tempArray.push(dict);
+		});
 
 		setPlants(tempArray);
-	}
+	};
 
 	useEffect(() =>{
 		fetchData();
-	}, [])
+	}, []);
 
 	useEffect(() => {
 		const unsubscribe = navigator.addListener('focus', () => {
@@ -55,15 +71,15 @@ export default function HomeScreen({ navigation }) {
 	}, []);
 
 	return (
-		<ScrollView 
-			style={styles.containermain}
+		<ScrollView
+			contentContainerStyle={styles.containermain}
 			refreshControl={
 				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 			}
 		>
 			<View style={styles.section}>
-				<Text style={styles.subtitle}>Notifications</Text>
-				<View style={styles.notificationcard}>
+				<Text style={styles.subtitle}>No New Notifications</Text>
+				{/* <View style={styles.notificationcard}>
 					<View style={styles.flexrow}>
 						<Icon style={styles.icon} name='warning' size={30} />
 						<Text style={styles.notification}>Daisy is not receiving enough sun</Text>
@@ -75,7 +91,7 @@ export default function HomeScreen({ navigation }) {
 					>
 						<Icon style={styles.close} name='close-outline' size={30} />
 					</Pressable>
-				</View>
+				</View> */}
 			</View>
 			<View style={styles.section}>
 				<View style={styles.uppercard}>
@@ -87,8 +103,36 @@ export default function HomeScreen({ navigation }) {
 						<Text style={styles.subtitlebutton}>View All</Text>
 					</Pressable>
 				</View>
-				{plants.map(item => {
-					return(<PlantComponent key={item.id} plant={item} />)
+				{/* <View style={styles.bottomcard}>
+					<View style={styles.upperbox}>
+						<Text style={styles.titlebox}>Daisy</Text>
+						<Icon2 style={styles.iconbox} name='ghost' size={80} />
+					</View>
+					<View style={styles.lowerbox}>
+						<View>
+							<Pressable
+								style={styles.box}
+								onPress={() => navigation.navigate('All Plants')}
+								android_ripple={{ borderless: true, radius: 20 }}
+							>
+								<Icon name='list' size={50} />
+								<Text style={styles.subtitlebox}>Details</Text>
+							</Pressable>
+						</View>
+						<View>
+							<Pressable
+								style={styles.box}
+								onPress={() => navigation.navigate('Edit Plant')}
+								android_ripple={{ borderless: true, radius: 20 }}
+							>
+								<Icon name='pencil' size={50} />
+								<Text style={styles.subtitlebox}>Edit</Text>
+							</Pressable>
+						</View>
+					</View>
+				</View> */}
+				{plants.map((item) => {
+					return <PlantComponent key={item.id} plant={item} />;
 				})}
 			</View>
 		</ScrollView>
@@ -97,15 +141,18 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
 	subtitle: {
-		fontSize: 30,
-		fontWeight: 'regular',
-		paddingBottom: 5,
+		fontSize: 20,
+		fontWeight: '',
+		padding: 10,
+		paddingBottom: 0,
 		paddingLeft: 20,
 		
 	},
 	subtitlebutton: {
+		paddingBottom: 0,
 		fontSize: 20,
-		fontWeight: '200',
+		fontWeight: '',
+		padding: 10,
 	},
 	notification: {
 		fontSize: 13,
@@ -188,12 +235,20 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-end',
 	},
 	containermain: {
-		flex: 1,
-		backgroundColor: 'white',
-		paddingTop: 40,
-		paddingBottom: 40,
-		paddingLeft: 20,
-		paddingRight: 20,
-		
+		flexGrow: 1,
+		width: width,
+		marginBottom: 40,
+		marginTop: 40,
+		// flexDirection: 'column',
+		alignItems: 'center',
+		// justifyContent: 'flex-start',
+		// flex: 1,
+		// width: width,
+		// backgroundColor: 'white',
+		//paddingTop: 10,
+		// paddingBottom: 40,
+		// marginBottom: 40,
+		//paddingLeft: 20,
+		//paddingRight: 20,
 	},
 });
