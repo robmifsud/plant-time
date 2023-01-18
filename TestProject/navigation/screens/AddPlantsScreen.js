@@ -10,7 +10,7 @@ import {
 	Alert,
 	ScrollView,
 } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
@@ -26,11 +26,13 @@ import {
 	doc,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import sampleImage from '../../assets/iconPlant.png'
 
 export default function AddPlantsScreen({ navigation }) {
 	const [species, setSpecies] = useState([]);
 	const [plantName, setPlantName] = useState('');
-	const [plantImage, setPlantImage] = useState(null);
+	const sampleUri = Image.resolveAssetSource(sampleImage).uri;
+	const [plantImage, setPlantImage] = useState(sampleUri);
 	const [plantSpecies, setPlantSpecies] = useState('');
 
 	useEffect(() => {
@@ -46,6 +48,7 @@ export default function AddPlantsScreen({ navigation }) {
 	}, []);
 
 	async function addImage() {
+
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
@@ -69,12 +72,12 @@ export default function AddPlantsScreen({ navigation }) {
 			};
 			xhr.responseType = 'blob';
 
+			console.log('Confirm uri: ', plantImage);
 			xhr.open('GET', plantImage, true);
 			xhr.send(null);
 		});
 
 		uploadBytes(ref(getStorage(), reference), blob).then((result) => {
-			// console.log('uploadBytes result: ', result.ref)
 			getDownloadURL(result.ref)
 				.then((url) => {
 					updateDoc(doc(getFirestore(), 'plants', reference), {
@@ -86,21 +89,28 @@ export default function AddPlantsScreen({ navigation }) {
 	};
 
 	const addPlant = async () => {
-		// Get plants collection from firestore and add new plant document to the collection
-		const plant = {
-			plantName: plantName,
-			userId: getAuth().currentUser.uid,
-			speciesId: plantSpecies,
-			plantImage: plantImage, // to remove?
-			statusId: '/status/2', // default status : good
-		};
+		if(plantName === '' || plantSpecies === ''){
+			Alert.alert(
+				'Warning',
+				'Please fill in all the fields and try again.',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+		} else {
+			// Get plants collection from firestore and add new plant document to the collection
+			const plant = {
+				plantName: plantName,
+				userId: getAuth().currentUser.uid,
+				speciesId: plantSpecies,
+				plantImage: plantImage, // to remove?
+				statusId: '/status/2', // default status : good
+			};
 
-		await addDoc(collection(getFirestore(), 'plants'), plant)
+			await addDoc(collection(getFirestore(), 'plants'), plant)
 			.then((docRef) => {
 				console.log('Plant with id: ', docRef.id, ' added to firestore: ', plant);
 
 				uploadImage(docRef.id);
-
+				
 				// Reset states
 				setPlantName('');
 				setPlantImage(null);
@@ -115,6 +125,7 @@ export default function AddPlantsScreen({ navigation }) {
 					[{ text: 'Ok', style: 'cancel' }]
 				);
 			});
+		}
 	};
 
 	return (

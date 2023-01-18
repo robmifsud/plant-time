@@ -10,12 +10,13 @@ import AddPlantsScreen from './screens/AddPlantsScreen';
 import AllPlantsScreen from './screens/AllPlantsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import EditPlantScreen from './screens/EditPlantScreen';
+import AllPlantsStack from './screens/AllPlantsStack';
 
 //screen names
 const homeName = 'Home';
 const addplantsName = 'Add Plants';
 const settingsName = 'Settings';
-const allplantsName = 'All Plants';
+const allplantsName = 'AllPlantsStack';
 const editplantName = 'Edit Plant';
 
 const Tab = createBottomTabNavigator();
@@ -51,11 +52,12 @@ export default function MainContainer() {
 				}}
 			>
 				{/* the icons and names at the bottom & top */}
-				<Tab.Screen name={homeName} component={HomeScreen} />
+				<Tab.Screen name={homeName} component={HomeScreen} options={{headerShown : true}}/>
 				<Tab.Screen name={addplantsName} component={AddPlantsScreen} />
-				<Tab.Screen name={allplantsName} component={AllPlantsScreen} />
+				{/* <Tab.Screen name={allplantsName} component={AllPlantsScreen} /> */}
+				<Tab.Screen name={allplantsName} component={AllPlantsStack} options={{headerShown : false, title:'All Plants'}}/>
 				<Tab.Screen name={settingsName} component={SettingsScreen} />
-				<Tab.Screen name={editplantName} component={EditPlantScreen} />
+				{/* <Tab.Screen name={editplantName} component={EditPlantScreen} /> */}
 			</Tab.Navigator>
 		</NavigationContainer>
 	);

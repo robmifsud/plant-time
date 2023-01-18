@@ -3,34 +3,24 @@ import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon3 from 'react-native-vector-icons/Feather';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';;
+import { useNavigation } from '@react-navigation/native';
 
 const PlantComponent = (props) => {
     const [imageUrl, setImageUrl] = useState(null);
     const [plant, setPlant] = useState({});
+    const navigation = useNavigation();
 
     useEffect(() => {
         setPlant(props.plant);
-
-        const fetchImage = async() => {      
-            const reference = ref(getStorage(), plant.id);
-            await getDownloadURL(reference)
-            .then(url => {
-                console.log('Image url: ', url);
-                setImageUrl(url);
-            })
-            .catch(error => console.log('Errow while fetching image: ', error))
-        }
-
-        if (plant != {}){
-            // fetchImage();
-        }
-        
     });
 
-    return (
-    // <View style={styles.section}>
-        
+    const editPlant = () => {
+        navigation.push('Edit Plant', {
+            ogPlant: plant,
+        });
+    }
+
+    return ( 
         <View style={styles.bottomcard}>
             <View style={styles.upperbox}>
                 { plant ? (
@@ -44,8 +34,6 @@ const PlantComponent = (props) => {
                     source={{uri: plant.plantImage}}
                     style={styles.plantImg}
                 />
-                
-                {/* <Icon3 style={styles.iconbox} name='smile' size={80} /> */}
             </View>
             <View style={styles.lowerbox}>
                 <View>
@@ -61,7 +49,7 @@ const PlantComponent = (props) => {
                 <View>
                     <Pressable
                         style={styles.box}
-                        onPress={() => navigation.navigate('All Plants')}
+                        onPress={editPlant}
                         android_ripple={{ borderless: true, radius: 20 }}
                     >
                         <Icon name='pencil' size={50} />
@@ -70,7 +58,6 @@ const PlantComponent = (props) => {
                 </View>
             </View>
         </View>
-    // </View>
     );
 
 };
