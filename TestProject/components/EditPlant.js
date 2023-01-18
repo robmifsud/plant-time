@@ -9,6 +9,7 @@ import {
 	Button,
 	Alert,
 	ScrollView,
+	Modal
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -24,7 +25,8 @@ import {
     setDoc,
 	updateDoc,
 	doc,
-	deleteDoc
+	deleteDoc,
+	addDoc
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {useRoute, useNavigation} from "@react-navigation/native";
@@ -42,6 +44,9 @@ export default function EditPlant({ navigation }){
 	const [plantImage, setPlantImage] = useState(ogPlant.plantImage);
 	const [imageSelected, setImageSelected] = useState(false);
 	const [plantSpecies, setPlantSpecies] = useState(ogPlant.speciesId);
+	const [sensorModal, setSensorModal] = useState(false);
+	const [sensorModelNo, setSensorModelNo] = useState('');
+	const [moistureSensorId, setMoistureSensorId] = useState(ogPlant.moistureSensorId);
 
     useEffect(() => {
 		async function getSpecies() {
@@ -114,13 +119,14 @@ export default function EditPlant({ navigation }){
 		} else {
             const db = getFirestore();
 
-            // Get plants collection from firestore and add new plant document to the collection
+            
             const plant = {
                 plantName: plantName,
                 userId: getAuth().currentUser.uid,
                 speciesId: plantSpecies,
                 plantImage: plantImage, // to remove?
                 statusId: '/status/2', // default status : good
+				moistureSensorId: moistureSensorId,
             };
 
             await setDoc(doc(db, 'plants', ogPlant.id), plant)
@@ -170,6 +176,34 @@ export default function EditPlant({ navigation }){
 		})
 	}
 
+	const addSensor = async () => {
+		console.log('Test');
+		const soilMoistureSensor = {
+			moistureLevel : 50,
+			modelNumber : sensorModelNo,
+		}
+		await addDoc(collection(getFirestore(),'moistureSensors'), soilMoistureSensor)
+		.then((docRef) => {
+			console.log('Sensor with id: ',docRef.id ,'added to firestore.');
+			setMoistureSensorId(docRef.id);
+			setSensorModal(false)
+			Alert.alert(
+				'Success!',
+				'A soil moisture sensor has been added successfully.',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+		})
+		.catch(error => {
+			console.log('Error while adding Soil Moisture Sensor: ', error);
+			Alert.alert(
+				'Error',
+				'Something went wrong while adding the sensor, please try again',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+			setSensorModal(false);
+		})
+	}
+
     return (
         <ScrollView>
 			<View style={styles.inputContainer}>
@@ -203,18 +237,51 @@ export default function EditPlant({ navigation }){
 					/>
 				</View>
 				<View style={styles.buttonContainer}>
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					<TouchableOpacity onPress={() => {setSensorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon name='tint' size={25} style={styles.icon} />
 							<Text style={styles.buttonText}>Add soil moisture sensor</Text>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+
+					<Modal
+						animationType="fade"
+						transparent={true}
+						visible={sensorModal}
+						// onRequestClose={() => {
+						// 	Alert.alert('Sensor has been added.');
+						// }}
+					>
+						<View style={styles.modalContainer}>
+							<View style={styles.cardContainer}>
+								<Text style={styles.modalTitle}>Add Sensor</Text>
+								<Text style={styles.modalSubtitle}>Model Number:</Text>
+								<TextInput style={styles.modalInput} value={sensorModelNo} onChangeText={(sensorModelNo) => setSensorModelNo(sensorModelNo)}></TextInput>
+
+								<View style={styles.modalButtonRow}>
+									<TouchableOpacity
+										onPress={() => {setSensorModal(false)}}
+										style={[styles.modalButton, {backgroundColor: '#b02121'}]}
+									>
+										<Text style={styles.modalButtonText}>Cancel</Text>
+									</TouchableOpacity>
+									<TouchableOpacity 
+										style={[styles.modalButton, {backgroundColor : 'rgb(58,90,64)'}]}
+										onPress={addSensor}
+									>
+										<Text style={styles.modalButtonText}>Add</Text>
+									</TouchableOpacity> 
+								</View>
+							</View>
+						</View>
+					</Modal>
+
+					{/* <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon2 name='plus-a' size={15} style={styles.icon} />
 							<Text style={styles.buttonText}>Add irrigator</Text>
 						</View>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 					<TouchableOpacity onPress={deletePlant} style={styles.buttonClickContain}>
 						<View style={[styles.button, styles.deleteButton]}>
 							<Icon name='trash' size={25} style={styles.icon} />
@@ -322,4 +389,69 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		marginRight: 30,
 	},
+	modalContainer: {
+		backgroundColor: 'rgba(256,256,256,0.85)',
+		width: '100%',
+		height: '100%',
+		flex:1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	cardContainer:{
+		padding: 24,
+		width: '80%',
+		// height: '30%',
+		backgroundColor: 'white',
+		borderRadius: 12,
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 1,
+		},
+		shadowOpacity: 0.22,
+		shadowRadius: 2.22,
+		elevation: 3,
+	},
+	modalTitle:{
+		fontSize: 20,
+		fontWeight: 'bold',
+		marginBottom: 8,
+		marginLeft: 6
+	},
+	modalSubtitle:{
+		fontSize:16,
+		marginBottom: 4,
+		marginLeft: 6
+	},
+	modalInput:{
+		borderRadius: 6,
+		backgroundColor: 'rgba(58,90,64,0.2)',
+		paddingTop: 2,
+		paddingBottom: 2,
+		paddingLeft: 10,
+		marginBottom:24
+	},
+	modalButtonRow:{
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginTop: 'auto'
+	},
+	modalButton:{
+
+		flex:1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		width:'100%',
+		maxWidth:'45%',
+		borderRadius:8,
+		padding:8,
+		fontSize:20,
+		fontWeight:'bold',
+	},
+	modalButtonText:{
+		color: 'white',
+		fontWeight: 'bold',
+		fontSize: 16
+	}
 });
