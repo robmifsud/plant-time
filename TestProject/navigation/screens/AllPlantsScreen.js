@@ -4,10 +4,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { getFirestore, getDocs, collection, query, where } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
+	const navigator = useNavigation();
 	
 	const fetchData = async() => {
 		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
@@ -33,7 +35,15 @@ export default function HomeScreen({ navigation }) {
 
 	useEffect(() => {
 		fetchData();
-	}, [])	
+	}, [])
+
+	useEffect(() => {
+		const unsubscribe = navigator.addListener('focus', () => {
+			// Handle callback here
+			fetchData();
+		});
+		return unsubscribe;
+	}, [navigator])
 
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
