@@ -52,7 +52,7 @@ export default function HomeScreen({ navigation }) {
 			}
 		>
 			<View style={styles.section}>
-				<Text style={styles.subtitle}>Notifications:</Text>
+				<Text style={styles.subtitle}>Notifications</Text>
 				<View style={styles.notificationcard}>
 					<View style={styles.flexrow}>
 						<Icon style={styles.icon} name='warning' size={30} />
@@ -69,7 +69,7 @@ export default function HomeScreen({ navigation }) {
 			</View>
 			<View style={styles.section}>
 				<View style={styles.uppercard}>
-					<Text style={styles.subtitle}>Plants:</Text>
+					<Text style={styles.subtitle}>Plants</Text>
 					<Pressable
 						onPress={() => navigation.navigate('All Plants')}
 						android_ripple={{ borderless: true, radius: 20 }}
@@ -88,19 +88,17 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
 	subtitle: {
 		fontSize: 30,
-		fontWeight: 'bold',
-		padding: 10,
-		paddingBottom: 0,
+		fontWeight: 'regular',
+		paddingBottom: 5,
 		paddingLeft: 20,
+		
 	},
 	subtitlebutton: {
-		paddingBottom: 0,
-		fontSize: 25,
-		fontWeight: 'bold',
-		padding: 10,
+		fontSize: 20,
+		fontWeight: '200',
 	},
 	notification: {
-		fontSize: 18,
+		fontSize: 13,
 		textDecorationLine: 'underline',
 		color: '#ffb74d',
 	},
@@ -109,15 +107,17 @@ const styles = StyleSheet.create({
 		margin: 8,
 		borderColor: '#fbeed5',
 		borderWidth: 2,
+		borderRadius: 5,
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-between',
+		justifyContent: 'center',
 	},
 	bottomcard: {
 		padding: 20,
 		marginTop: 10,
 		borderColor: '#fbeed5',
 		borderWidth: 2,
+		
 	},
 	upperbox: {
 		alignItems: 'center',
@@ -134,19 +134,23 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		
 	},
 	box: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		
 	},
 	subtitlebox: {
 		marginLeft: 10,
 		fontSize: 25,
+		
 	},
 	titlebox: {
 		marginLeft: 10,
 		fontSize: 35,
 		fontWeight: 'bold',
+		
 	},
 	flexrow: {
 		flexDirection: 'row',
@@ -180,5 +184,6 @@ const styles = StyleSheet.create({
 		paddingBottom: 40,
 		paddingLeft: 20,
 		paddingRight: 20,
+		
 	},
 });
