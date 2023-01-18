@@ -49,68 +49,11 @@ const PlantComponent = (props) => {
 				)}
 
 				<Card.Actions>
-					<Icon name='pencil' color='white' size={30} />
+					<Icon name='pencil' color='white' size={30} onPress={editPlant} />
 					<Icon name='list' color='white' size={30} />
 				</Card.Actions>
 			</Card>
 		</View>
-		// <View style={styles.section}>
-		// 	<View style={styles.bottomcard}>
-		// 		<View style={styles.upperbox}>
-		// 			<Image source={{ uri: plant.plantImage }} style={styles.plantImg} />
-
-		// 			{plant ? (
-		// 				<Text style={styles.titlebox}>{plant.plantName}</Text>
-		// 			) : (
-		// 				<Text style={styles.titlebox}>...</Text>
-		// 			)}
-
-		// 			{/* <Icon3 style={styles.iconbox} name='smile' size={80} /> */}
-		// 			<View>
-		// 				<Pressable
-		// 					style={styles.box}
-		// 					onPress={() => navigation.navigate('All Plants')}
-		// 					android_ripple={{ borderless: true, radius: 20 }}
-		// 				>
-		// 					<Icon name='list' size={50} />
-		// 					{/* <Text style={styles.subtitlebox}>Details</Text> */}
-		// 				</Pressable>
-		// 			</View>
-		// 			<View style={styles.buttonContainer}>
-		// 				<Pressable
-		// 					style={styles.box}
-		// 					onPress={() => navigation.navigate('All Plants')}
-		// 					android_ripple={{ borderless: true, radius: 20 }}
-		// 				>
-		// 					<Icon name='pencil' size={20} />
-		// 					{/* <Text style={styles.subtitlebox}>Edit</Text> */}
-		// 				</Pressable>
-		// 			</View>
-		// 		</View>
-		// 		{/* <View style={styles.lowerbox}>
-		// 		<View>
-		// 			<Pressable
-		// 				style={styles.box}
-		// 				onPress={() => navigation.navigate('All Plants')}
-		// 				android_ripple={{ borderless: true, radius: 20 }}
-		// 			>
-		// 				<Icon name='list' size={50} />
-		// 				<Text style={styles.subtitlebox}>Details</Text>
-		// 			</Pressable>
-		// 		</View>
-		// 		<View>
-		// 			<Pressable
-		// 				style={styles.box}
-		// 				onPress={() => navigation.navigate('All Plants')}
-		// 				android_ripple={{ borderless: true, radius: 20 }}
-		// 			>
-		// 				<Icon name='pencil' size={50} />
-		// 				<Text style={styles.subtitlebox}>Edit</Text>
-		// 			</Pressable>
-		// 		</View>
-		// 	</View> */}
-		// 	</View>
-		// </View>
 	);
 };
 
