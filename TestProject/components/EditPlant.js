@@ -148,70 +148,65 @@ export default function EditPlant({ navigation }){
 	};
 
     return (
-        <ScrollView contentContainerStyle={styles.inputContainer}>
-        {plantImage ? (
-            <Image style={styles.addImage} source={{ uri: plantImage }} />
-        ) : (
-            <Image
-                style={styles.addImage}
-                source={require('../assets/images/add-image-icon.png')}
-            />
-        )}
-
-        <Button
-            style={styles.uploadImageButton}
-            title='Upload Image'
-            onPress={addImage}
-        />
-
-        <View style={styles.textInput}>
-            <TextInput
-                placeholder='Name'
-                fontSize={20}
-                value={plantName}
-                onChangeText={(plantName) => setPlantName(plantName)}
-            />
-        </View>
-
-        <View style={styles.selectContainer}>
-            <SelectList
-                data={species}
-                defaultOption={initialSpecies}
-                setSelected={setPlantSpecies}
-                placeholder='Select species'
-            />
-        </View>
-
-        <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
-                <View style={styles.button}>
-                    <Icon name='thermometer-1' size={25} style={styles.icon} />
-                    <Text style={styles.buttonText}>Add temperature sensor</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
-                <View style={styles.button}>
-                    <Icon name='tint' size={25} style={styles.icon} />
-                    <Text style={styles.buttonText}>Add soil moisture sensor</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
-                <View style={styles.button}>
-                    <Icon2 name='plus-a' size={15} style={styles.icon} />
-                    <Text style={styles.buttonText}>Add irrigator</Text>
-                </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={updatePlant} style={styles.buttonClickContain}>
-                <Image
-                    style={styles.doneImage}
-                    source={require('../assets/images/done-icon.png')}
-                />
-            </TouchableOpacity>
-        </View>
-    </ScrollView>
+        <ScrollView>
+			<View style={styles.inputContainer}>
+				{plantImage ? (
+					<Image style={styles.addImage} source={{ uri: plantImage }} />
+				) : (
+					<Image
+						style={styles.addImage}
+						source={require('../assets/images/add-image-icon.png')}
+					/>
+				)}
+				<Button
+					style={styles.uploadImageButton}
+					title='Upload Image'
+					onPress={addImage}
+				/>
+				<View style={styles.textInput}>
+					<TextInput
+						placeholder='Name'
+						fontSize={20}
+						value={plantName}
+						onChangeText={(plantName) => setPlantName(plantName)}
+					/>
+				</View>
+				<View style={styles.selectContainer}>
+					<SelectList
+						data={species}
+						defaultOption={initialSpecies}
+						setSelected={setPlantSpecies}
+						placeholder='Select species'
+					/>
+				</View>
+				<View style={styles.buttonContainer}>
+					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+						<View style={styles.button}>
+							<Icon name='thermometer-1' size={25} style={styles.icon} />
+							<Text style={styles.buttonText}>Add temperature sensor</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+						<View style={styles.button}>
+							<Icon name='tint' size={25} style={styles.icon} />
+							<Text style={styles.buttonText}>Add soil moisture sensor</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+						<View style={styles.button}>
+							<Icon2 name='plus-a' size={15} style={styles.icon} />
+							<Text style={styles.buttonText}>Add irrigator</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={updatePlant} style={styles.buttonClickContain}>
+						<Image
+							style={styles.doneImage}
+							source={require('../assets/images/done-icon.png')}
+						/>
+					</TouchableOpacity>
+				</View>
+			</View>
+    	</ScrollView>
     );
 }
 

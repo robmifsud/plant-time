@@ -11,6 +11,7 @@ import AllPlantsScreen from './screens/AllPlantsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import EditPlantScreen from './screens/EditPlantScreen';
 import AllPlantsStack from './screens/AllPlantsStack';
+import HomeScreenStack from './screens/HomeScreenStack';
 
 //screen names
 const homeName = 'Home';
@@ -43,16 +44,17 @@ export default function MainContainer() {
 
 						return <Icon name={iconName} size={30} />;
 					},
-					tabBarStyle: { height: 85, paddingTop: 5 },
+					tabBarStyle: { height: Platform.select({ios:85, android:65}), paddingTop: Platform.select({ios: 5, android: 7.5}) },
 				})}
 				tabBarOptions={{
 					activeTintColor: 'tomato',
 					inactiveTintColor: 'grey',
-					labelStyle: { paddingBottom: 5, fontSize: 10 },
+					labelStyle: { paddingBottom: Platform.select({ios: 5, android: 10}), fontSize: 10 },
 				}}
 			>
 				{/* the icons and names at the bottom & top */}
-				<Tab.Screen name={homeName} component={HomeScreen} options={{headerShown : true}}/>
+				{/* <Tab.Screen name={homeName} component={HomeScreen} options={{headerShown : true}}/> */}
+				<Tab.Screen name={homeName} component={HomeScreenStack} options={{headerShown : false, title:'Home Screen'}}/>
 				<Tab.Screen name={addplantsName} component={AddPlantsScreen} />
 				{/* <Tab.Screen name={allplantsName} component={AllPlantsScreen} /> */}
 				<Tab.Screen name={allplantsName} component={AllPlantsStack} options={{headerShown : false, title:'All Plants'}}/>

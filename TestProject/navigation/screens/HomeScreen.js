@@ -71,7 +71,7 @@ export default function HomeScreen({ navigation }) {
 				<View style={styles.uppercard}>
 					<Text style={styles.subtitle}>Plants</Text>
 					<Pressable
-						onPress={() => navigation.navigate('All Plants')}
+						onPress={() => navigation.navigate('AllPlantsStack')}
 						android_ripple={{ borderless: true, radius: 20 }}
 					>
 						<Text style={styles.subtitlebutton}>View All</Text>
