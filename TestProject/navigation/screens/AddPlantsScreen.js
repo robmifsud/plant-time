@@ -220,8 +220,8 @@ export default function AddPlantsScreen({ navigation }) {
 					</TouchableOpacity>
 					<TouchableOpacity onPress={addPlant} style={styles.buttonClickContain}>
 					<View style={styles.submit}>
-							<Icon2 name='check' size={15} style={styles.icon} />
-							<Text style={styles.buttonText}>Submit Plant</Text>
+							<Icon2 name='check' size={15} style={styles.submitIcon} />
+							<Text style={styles.submitText}>Submit Plant</Text>
 						</View>
 					</TouchableOpacity>
 				</View>
@@ -321,6 +321,18 @@ const styles = StyleSheet.create({
 		height: 55,
 	},
 
+	
+	submitText: {
+		color: 'white',
+		fontSize: 16,
+		fontWeight: 'regular',
+	},
+
+	submitIcon: {
+		color: 'white',
+		marginLeft: 10,
+		marginRight: 20,
+	},
 	buttonClickContain: {
 		marginBottom: 24,
 	},
