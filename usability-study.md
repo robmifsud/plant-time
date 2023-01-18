@@ -36,7 +36,7 @@ npx expo start
 
 ### 1. Login with your Google account.
 
-Please tell the person overseeing your study your expo username, as we have to approve you in the Google console.
+Please tell the person overseeing your study your expo username, as we have to approve it in the Google console.
 
 ### 2. Adding a sample plant
 
@@ -47,6 +47,8 @@ Upload an image of your choice.
 Insert a name for your plant.
 
 Select species.
+
+Add a soil moisture sensor, the 'Model Number' field can be any string you choose.
 
 Click the done icon at the bottom to complete the process.
 

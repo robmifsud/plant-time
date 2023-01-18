@@ -39,6 +39,8 @@ export default function AddPlantsScreen({ navigation }) {
 	const [plantImage, setPlantImage] = useState(sampleUri);
 	const [plantSpecies, setPlantSpecies] = useState('');
 	const [sensorModal, setSensorModal] = useState(false);
+	const [sensorModelNo, setSensorModelNo] = useState('');
+	const [moistureSensorId, setMoistureSensorId] = useState('');
 
 	useEffect(() => {
 		async function getSpecies() {
@@ -107,6 +109,7 @@ export default function AddPlantsScreen({ navigation }) {
 				speciesId: plantSpecies,
 				plantImage: plantImage, // to remove?
 				statusId: '/status/2', // default status : good
+				moistureSensorId: moistureSensorId,
 			};
 
 			await addDoc(collection(getFirestore(), 'plants'), plant)
@@ -120,6 +123,8 @@ export default function AddPlantsScreen({ navigation }) {
 				setPlantImage(null);
 				setPlantSpecies('');
 				setSpecies();
+				setMoistureSensorId('');
+				setSensorModelNo('');
 			})
 			.catch((error) => {
 				console.log('Error while saving plant to firestore: ', error);
@@ -132,9 +137,33 @@ export default function AddPlantsScreen({ navigation }) {
 		}
 	};
 
-	// const addSensor = async () => {
-	// 	await addDoc(collection(getFirestore(),'moistureSensors'))
-	// } 
+	const addSensor = async () => {
+		console.log('Test');
+		const soilMoistureSensor = {
+			moistureLevel : 50,
+			modelNumber : sensorModelNo,
+		}
+		await addDoc(collection(getFirestore(),'moistureSensors'), soilMoistureSensor)
+		.then((docRef) => {
+			console.log('Sensor with id: ',docRef.id ,'added to firestore.');
+			setMoistureSensorId(docRef.id);
+			setSensorModal(false)
+			Alert.alert(
+				'Success!',
+				'A soil moisture sensor has been added successfully.',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+		})
+		.catch(error => {
+			console.log('Error while adding Soil Moisture Sensor: ', error);
+			Alert.alert(
+				'Error',
+				'Something went wrong while adding the sensor, please try again',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+			setSensorModal(false);
+		})
+	}
 
 	return (
 		<ScrollView>
@@ -169,12 +198,12 @@ export default function AddPlantsScreen({ navigation }) {
 					/>
 				</View>
 				<View style={styles.buttonContainer}>
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					{/* <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon name='thermometer-1' size={25} style={styles.icon} />
 							<Text style={styles.buttonText}>Add temperature sensor</Text>
 						</View>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 					<TouchableOpacity onPress={() => {setSensorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon name='tint' size={25} style={styles.icon} />
@@ -186,15 +215,15 @@ export default function AddPlantsScreen({ navigation }) {
 						animationType="fade"
 						transparent={true}
 						visible={sensorModal}
-						onRequestClose={() => {
-							Alert.alert('Sensor has been added.');
-						}}
+						// onRequestClose={() => {
+						// 	Alert.alert('Sensor has been added.');
+						// }}
 					>
 						<View style={styles.modalContainer}>
 							<View style={styles.cardContainer}>
 								<Text style={styles.modalTitle}>Add Sensor</Text>
 								<Text style={styles.modalSubtitle}>Model Number:</Text>
-								<TextInput style={styles.modalInput}></TextInput>
+								<TextInput style={styles.modalInput} value={sensorModelNo} onChangeText={(sensorModelNo) => setSensorModelNo(sensorModelNo)}></TextInput>
 
 								<View style={styles.modalButtonRow}>
 									<TouchableOpacity
@@ -203,21 +232,23 @@ export default function AddPlantsScreen({ navigation }) {
 									>
 										<Text style={styles.modalButtonText}>Cancel</Text>
 									</TouchableOpacity>
-									<TouchableOpacity style={[styles.modalButton, {backgroundColor : 'rgb(58,90,64)'}]}
+									<TouchableOpacity 
+										style={[styles.modalButton, {backgroundColor : 'rgb(58,90,64)'}]}
+										onPress={addSensor}
 									>
 										<Text style={styles.modalButtonText}>Add</Text>
-									</TouchableOpacity>
+									</TouchableOpacity> 
 								</View>
 							</View>
 						</View>
 					</Modal>
 
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					{/* <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon2 name='plus-a' size={15} style={styles.icon} />
 							<Text style={styles.buttonText}>Add irrigator</Text>
 						</View>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 					<TouchableOpacity onPress={addPlant} style={styles.buttonClickContain}>
 					<View style={styles.submit}>
 							<Icon2 name='check' size={15} style={styles.submitIcon} />
