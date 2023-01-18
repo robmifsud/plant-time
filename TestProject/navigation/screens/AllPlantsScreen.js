@@ -14,10 +14,10 @@ export default function HomeScreen({ navigation }) {
 		const tempArray = [];
 		const db = getFirestore();
 		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
-		// const querySnapshot = await getDocs(collection(db, 'plants'));
 		querySnapshot.forEach(doc => {
 			const dict = {
 				// id : doc.ref.path,
+				// ref: doc.ref,
 				id : doc.id,
 				plantName : doc.get('plantName'),
 				plantImage : doc.get('plantImage'),

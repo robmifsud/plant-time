@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, RefreshControl } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
 import { getFirestore, getDocs, collection, where, query } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
-import { ref } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 
 export default function HomeScreen({ navigation }) {
@@ -17,7 +15,6 @@ export default function HomeScreen({ navigation }) {
 		const tempArray = [];
 		const db = getFirestore();
 		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
-		// const querySnapshot = await getDocs(collection(db, 'plants'));
 		querySnapshot.forEach(doc => {
 			const dict = {
 				id : doc.id,
@@ -74,40 +71,12 @@ export default function HomeScreen({ navigation }) {
 				<View style={styles.uppercard}>
 					<Text style={styles.subtitle}>Plants</Text>
 					<Pressable
-						onPress={() => navigation.navigate('All Plants')}
+						onPress={() => navigation.navigate('AllPlantsStack')}
 						android_ripple={{ borderless: true, radius: 20 }}
 					>
 						<Text style={styles.subtitlebutton}>View All</Text>
 					</Pressable>
 				</View>
-				{ <View style={styles.bottomcard}>
-					<View style={styles.upperbox}>
-						<Text style={styles.titlebox}>Daisy</Text>
-						<Icon2 style={styles.iconbox} name='ghost' size={80} />
-					</View>
-					<View style={styles.lowerbox}>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='list' size={50} />
-								<Text style={styles.subtitlebox}>Details</Text>
-							</Pressable>
-						</View>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('Edit Plant')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='pencil' size={50} />
-								<Text style={styles.subtitlebox}>Edit</Text>
-							</Pressable>
-						</View>
-					</View>
-				</View> }
 				{plants.map(item => {
 					return(<PlantComponent key={item.id} plant={item} />)
 				})}
