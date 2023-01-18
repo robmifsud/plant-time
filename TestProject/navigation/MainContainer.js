@@ -47,7 +47,7 @@ export default function MainContainer() {
 					tabBarStyle: { height: Platform.select({ios:85, android:65}), paddingTop: Platform.select({ios: 5, android: 7.5}) },
 				})}
 				tabBarOptions={{
-					activeTintColor: 'tomato',
+					activeTintColor: '#80b742',
 					inactiveTintColor: 'grey',
 					labelStyle: { paddingBottom: Platform.select({ios: 5, android: 10}), fontSize: 10 },
 				}}
