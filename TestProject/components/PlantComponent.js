@@ -98,6 +98,7 @@ export default PlantComponent;
 const styles = StyleSheet.create({
 	textContainer: {
 		padding: 16,
+		//
 	},
 
 	iconContainer: {
