@@ -127,7 +127,7 @@ function App(){
         <Text style={styles.plantText}>Plant</Text>
         <Text style={styles.timeText}>Time</Text>
         </View>
-        <Text style={styles.subtitle}>Manage your garden!</Text>
+        <Text style={styles.subtitle}>Grow Smart, Monitor Easily</Text>
         </View>
       
         <TouchableOpacity style={styles.button} disabled={!request} onPress={() => {

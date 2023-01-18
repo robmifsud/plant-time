@@ -42,12 +42,12 @@ export default function MainContainer() {
 
 						return <Icon name={iconName} size={30} />;
 					},
-					tabBarStyle: { height: 85, paddingTop: 5 },
+					tabBarStyle: { height: Platform.select({ios:85, android:65}), paddingTop: Platform.select({ios: 5, android: 7.5}) },
 				})}
 				tabBarOptions={{
-					activeTintColor: 'tomato',
+					activeTintColor: '#80b742',
 					inactiveTintColor: 'grey',
-					labelStyle: { paddingBottom: 5, fontSize: 10 },
+					labelStyle: { paddingBottom: Platform.select({ios: 5, android: 10}), fontSize: 10 },
 				}}
 			>
 				{/* the icons and names at the bottom & top */}
