@@ -46,6 +46,7 @@ export default function HomeScreen({ navigation }) {
 				speciesId: doc.get('speciesId'),
 				statusId: doc.get('statusId'),
 				userId: doc.get('userId'),
+				moistureSensorId : doc.get('moistureSensorId'),
 			};
 			tempArray.push(dict);
 		});
