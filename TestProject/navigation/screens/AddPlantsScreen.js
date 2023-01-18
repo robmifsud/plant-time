@@ -10,6 +10,7 @@ import {
 	Alert,
 	ScrollView,
 	Dimensions,
+	Modal
 } from 'react-native';
 import { useState, useEffect, use } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -37,6 +38,7 @@ export default function AddPlantsScreen({ navigation }) {
 	const sampleUri = Image.resolveAssetSource(sampleImage).uri;
 	const [plantImage, setPlantImage] = useState(sampleUri);
 	const [plantSpecies, setPlantSpecies] = useState('');
+	const [sensorModal, setSensorModal] = useState(false);
 
 	useEffect(() => {
 		async function getSpecies() {
@@ -130,6 +132,10 @@ export default function AddPlantsScreen({ navigation }) {
 		}
 	};
 
+	// const addSensor = async () => {
+	// 	await addDoc(collection(getFirestore(),'moistureSensors'))
+	// } 
+
 	return (
 		<ScrollView>
 			<View style={styles.inputContainer}>
@@ -169,12 +175,43 @@ export default function AddPlantsScreen({ navigation }) {
 							<Text style={styles.buttonText}>Add temperature sensor</Text>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					<TouchableOpacity onPress={() => {setSensorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon name='tint' size={25} style={styles.icon} />
 							<Text style={styles.buttonText}>Add soil moisture sensor</Text>
 						</View>
 					</TouchableOpacity>
+
+					<Modal
+						animationType="fade"
+						transparent={true}
+						visible={sensorModal}
+						onRequestClose={() => {
+							Alert.alert('Sensor has been added.');
+						}}
+					>
+						<View style={styles.modalContainer}>
+							<View style={styles.cardContainer}>
+								<Text style={styles.modalTitle}>Add Sensor</Text>
+								<Text style={styles.modalSubtitle}>Model Number:</Text>
+								<TextInput style={styles.modalInput}></TextInput>
+
+								<View style={styles.modalButtonRow}>
+									<TouchableOpacity
+										onPress={() => {setSensorModal(false)}}
+										style={[styles.modalButton, {backgroundColor: '#b02121'}]}
+									>
+										<Text style={styles.modalButtonText}>Cancel</Text>
+									</TouchableOpacity>
+									<TouchableOpacity style={[styles.modalButton, {backgroundColor : 'rgb(58,90,64)'}]}
+									>
+										<Text style={styles.modalButtonText}>Add</Text>
+									</TouchableOpacity>
+								</View>
+							</View>
+						</View>
+					</Modal>
+
 					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon2 name='plus-a' size={15} style={styles.icon} />
@@ -282,5 +319,71 @@ const styles = StyleSheet.create({
 	},
 	spacer: {
 		height:300
+	},
+	modalContainer: {
+		backgroundColor: 'rgba(256,256,256,0.85)',
+		width: '100%',
+		height: '100%',
+		flex:1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	cardContainer:{
+		padding: 24,
+		width: '80%',
+		// height: '30%',
+		backgroundColor: 'white',
+		borderRadius: 12,
+		shadowColor: "#000",
+		shadowOffset: {
+			width: 0,
+			height: 1,
+		},
+		shadowOpacity: 0.22,
+		shadowRadius: 2.22,
+		elevation: 3,
+	},
+	modalTitle:{
+		fontSize: 20,
+		fontWeight: 'bold',
+		marginBottom: 8,
+		marginLeft: 6
+	},
+	modalSubtitle:{
+		fontSize:16,
+		marginBottom: 4,
+		marginLeft: 6
+	},
+	modalInput:{
+		borderRadius: 6,
+		backgroundColor: 'rgba(58,90,64,0.2)',
+		paddingTop: 2,
+		paddingBottom: 2,
+		paddingLeft: 10,
+		marginBottom:24
+	},
+	modalButtonRow:{
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginTop: 'auto'
+	},
+	modalButton:{
+
+		flex:1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		width:'100%',
+		maxWidth:'45%',
+		borderRadius:8,
+		padding:8,
+		fontSize:20,
+		fontWeight:'bold',
+	},
+	modalButtonText:{
+		color: 'white',
+		fontWeight: 'bold',
+		fontSize: 16
 	}
+
 });

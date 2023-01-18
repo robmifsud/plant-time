@@ -7,6 +7,8 @@ import * as Google from 'expo-auth-session/providers/google';
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithCredential } from 'firebase/auth';
 
+// global.__DEV__ = false;
+
 function App(){
   initializeApp({
     apiKey: "AIzaSyBHdOM8KSVqQpFdVqFDbMXh1O3DF0fwphw",

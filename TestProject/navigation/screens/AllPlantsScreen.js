@@ -16,7 +16,8 @@ import {
 } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
-const { width, height } = Dimensions.get('window');import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
