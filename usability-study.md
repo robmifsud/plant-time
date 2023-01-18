@@ -58,8 +58,6 @@ To delete a plant, tap on the edit icon.
 
 Tap on 'Delete Plant'
 
-&nbsp;
-
 ### 6. Signing out
 
 Tap on 'Settings' at the bottom of the navigation bar.
