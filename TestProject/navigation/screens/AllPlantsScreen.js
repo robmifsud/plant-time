@@ -1,59 +1,76 @@
 import * as React from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import {
+	View,
+	StyleSheet,
+	ScrollView,
+	RefreshControl,
+	Dimensions,
+} from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
-import { getFirestore, getDocs, collection, query, where } from 'firebase/firestore';
+import {
+	getFirestore,
+	getDocs,
+	collection,
+	query,
+	where,
+} from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
-
+const { width, height } = Dimensions.get('window');
 export default function HomeScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
-	
-	const fetchData = async() => {
+
+	const fetchData = async () => {
 		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
 		const tempArray = [];
 		const db = getFirestore();
-		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
+		const querySnapshot = await getDocs(
+			query(
+				collection(db, 'plants'),
+				where('userId', '==', getAuth().currentUser.uid)
+			)
+		);
 		// const querySnapshot = await getDocs(collection(db, 'plants'));
-		querySnapshot.forEach(doc => {
+		querySnapshot.forEach((doc) => {
 			const dict = {
 				// id : doc.ref.path,
-				id : doc.id,
-				plantName : doc.get('plantName'),
-				plantImage : doc.get('plantImage'),
-				speciesId : doc.get('speciesId'),
-				statusId : doc.get('statusId'),
-				userId : doc.get('userId')
-			}
-			tempArray.push(dict)
-		})
+				id: doc.id,
+				plantName: doc.get('plantName'),
+				plantImage: doc.get('plantImage'),
+				speciesId: doc.get('speciesId'),
+				statusId: doc.get('statusId'),
+				userId: doc.get('userId'),
+			};
+			tempArray.push(dict);
+		});
 
 		setPlantsRef(tempArray);
-	}
+	};
 
 	useEffect(() => {
 		fetchData();
-	}, [])	
+	}, []);
 
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
 		fetchData()
-		.then(() => setRefreshing(false))
-		.catch(error =>{
-			console.log('Refresh error: ', error)
-			setRefreshing(false)
-		})
-	  }, []);
-	
+			.then(() => setRefreshing(false))
+			.catch((error) => {
+				console.log('Refresh error: ', error);
+				setRefreshing(false);
+			});
+	}, []);
+
 	return (
-		<ScrollView 
-			style={styles.containermain}
+		<ScrollView
+			contentContainerStyle={styles.containermain}
 			refreshControl={
 				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 			}
 		>
-			{plantsRef.map(item => {
-				return(<PlantComponent key={item.id} plant={item} />)
+			{plantsRef.map((item) => {
+				return <PlantComponent key={item.id} plant={item} />;
 			})}
 			<View style={styles.spacer}></View>
 		</ScrollView>
@@ -150,15 +167,23 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-end',
 	},
 	containermain: {
-		flex: 1,
-		backgroundColor: 'white',
-		paddingTop: 10,
+		flexGrow: 1,
+		width: width,
+		marginBottom: 10,
+		marginTop: 30,
+		// flexDirection: 'column',
+		alignItems: 'center',
+		// justifyContent: 'flex-start',
+		// flex: 1,
+		// width: width,
+		// backgroundColor: 'white',
+		//paddingTop: 10,
 		// paddingBottom: 40,
 		// marginBottom: 40,
-		paddingLeft: 20,
-		paddingRight: 20,
+		//paddingLeft: 20,
+		//paddingRight: 20,
 	},
-	spacer:{
+	spacer: {
 		height: 20,
 	},
 });
