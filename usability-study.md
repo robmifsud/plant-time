@@ -30,8 +30,6 @@ npx expo start
 
 ### 1. Login with your google account.
 
-&nbsp;
-
 ### 2. Adding a sample plant
 
 Tap on 'Add Plants' at the bottom of the navigation bar.
@@ -44,32 +42,27 @@ Select species.
 
 Click the done icon at the bottom to complete the process.
 
-&nbsp;
-
 ### 3. Viewing all plants by clicking on 'All Plants' in the bottom navigation bar
 
 Tap on 'All Plants' at the bottom of the navigation bar.
 
-&nbsp;
-
 ### 4. Editing plant
 
-Lorem ipsum.
+Whilst viewing all plants, click on the edit icon to edit your plant.
 
-&nbsp;
+Tap the done icon once you are done from editing the plant.
 
 ### 5. Delete plant
 
-Lorem ipsum.
+To delete a plant, tap on the edit icon.
+
+Tap on 'Delete Plant'
 
 &nbsp;
-
-Click 'Sign Out'.
 
 ### 6. Signing out
 
 Tap on 'Settings' at the bottom of the navigation bar.
-
 Click 'Sign Out'.
 
 &nbsp;
