@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon3 from 'react-native-vector-icons/Feather';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { useNavigation } from '@react-navigation/native';
 import { browserPopupRedirectResolver } from '@firebase/auth';
 import {
 	Card,
@@ -20,30 +20,23 @@ import {
 	Paragraph,
 	LeftContent,
 	Button,
-} from 'react-native-paper';
+} from 'react-native-paper'
 
 const { width, height } = Dimensions.get('window');
 const PlantComponent = (props) => {
 	const [imageUrl, setImageUrl] = useState(null);
 	const [plant, setPlant] = useState({});
+    const navigation = useNavigation();
 
-	useEffect(() => {
-		setPlant(props.plant);
+    useEffect(() => {
+        setPlant(props.plant);
+    });
 
-		const fetchImage = async () => {
-			const reference = ref(getStorage(), plant.id);
-			await getDownloadURL(reference)
-				.then((url) => {
-					console.log('Image url: ', url);
-					setImageUrl(url);
-				})
-				.catch((error) => console.log('Error while fetching image: ', error));
-		};
-
-		if (plant != {}) {
-			// fetchImage();
-		}
-	});
+    const editPlant = () => {
+        navigation.push('Edit Plant', {
+            ogPlant: plant,
+        });
+    }
 
 	return (
 		<View style={styles.bottomcard}>

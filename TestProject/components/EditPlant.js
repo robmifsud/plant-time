@@ -9,9 +9,8 @@ import {
 	Button,
 	Alert,
 	ScrollView,
-	Dimensions,
 } from 'react-native';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
@@ -22,27 +21,38 @@ import {
 	getFirestore,
 	getDocs,
 	collection,
-	addDoc,
+    setDoc,
 	updateDoc,
 	doc,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import sampleImage from '../../assets/iconPlant.png'
+import {useRoute} from "@react-navigation/native";
 
-const { width, height } = Dimensions.get('window');
+export default function EditPlant({ navigation }){
+    
+    const route = useRoute();
+    
+    const { ogPlant } = route.params;
+    
+    const [species, setSpecies] = useState([]);
+    const [initialSpecies, setInitialSpecies] = useState({});
+	const [plantName, setPlantName] = useState(ogPlant.plantName);
+	const [plantImage, setPlantImage] = useState(ogPlant.plantImage);
+	const [imageSelected, setImageSelected] = useState(false);
+	const [plantSpecies, setPlantSpecies] = useState(ogPlant.speciesId);
 
-export default function AddPlantsScreen({ navigation }) {
-	const [species, setSpecies] = useState([]);
-	const [plantName, setPlantName] = useState('');
-	const sampleUri = Image.resolveAssetSource(sampleImage).uri;
-	const [plantImage, setPlantImage] = useState(sampleUri);
-	const [plantSpecies, setPlantSpecies] = useState('');
-
-	useEffect(() => {
+    useEffect(() => {
 		async function getSpecies() {
 			const db = getFirestore();
 			const querySnapshot = await getDocs(collection(db, 'species'));
 			let array = querySnapshot.docs.map((doc) => {
+                // Fetching initial species type
+                if (doc.ref.path == ogPlant.speciesId){
+                    setInitialSpecies({
+                        key : doc.ref.path,
+                        value : doc.data().speciesName
+                    });
+                }
 				return { key: doc.ref.path, value: doc.data().speciesName };
 			});
 			setSpecies(array);
@@ -50,7 +60,7 @@ export default function AddPlantsScreen({ navigation }) {
 		getSpecies();
 	}, []);
 
-	async function addImage() {
+    async function addImage() {
 
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -61,10 +71,11 @@ export default function AddPlantsScreen({ navigation }) {
 
 		if (!result.canceled) {
 			setPlantImage(result.assets[0].uri);
+			setImageSelected(true);
 		}
 	}
 
-	const uploadImage = async (reference) => {
+    const uploadImage = async (reference) => {
 		const blob = await new Promise((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
 			xhr.onload = function () {
@@ -75,12 +86,12 @@ export default function AddPlantsScreen({ navigation }) {
 			};
 			xhr.responseType = 'blob';
 
-			console.log('Confirm uri: ', plantImage);
 			xhr.open('GET', plantImage, true);
 			xhr.send(null);
 		});
 
 		uploadBytes(ref(getStorage(), reference), blob).then((result) => {
+			// console.log('uploadBytes result: ', result.ref)
 			getDownloadURL(result.ref)
 				.then((url) => {
 					updateDoc(doc(getFirestore(), 'plants', reference), {
@@ -91,56 +102,60 @@ export default function AddPlantsScreen({ navigation }) {
 		});
 	};
 
-	const addPlant = async () => {
-		if(plantName === '' || plantSpecies === ''){
+    const updatePlant = async () => {
+        if(plantName === '' || plantSpecies === ''){
 			Alert.alert(
 				'Warning',
 				'Please fill in all the fields and try again.',
 				[{ text: 'Ok', style: 'cancel' }]
 			);
 		} else {
-			// Get plants collection from firestore and add new plant document to the collection
-			const plant = {
-				plantName: plantName,
-				userId: getAuth().currentUser.uid,
-				speciesId: plantSpecies,
-				plantImage: plantImage, // to remove?
-				statusId: '/status/2', // default status : good
-			};
+            const db = getFirestore();
 
-			await addDoc(collection(getFirestore(), 'plants'), plant)
-			.then((docRef) => {
-				console.log('Plant with id: ', docRef.id, ' added to firestore: ', plant);
+            // Get plants collection from firestore and add new plant document to the collection
+            const plant = {
+                plantName: plantName,
+                userId: getAuth().currentUser.uid,
+                speciesId: plantSpecies,
+                plantImage: plantImage, // to remove?
+                statusId: '/status/2', // default status : good
+            };
 
-				uploadImage(docRef.id);
-				
-				// Reset states
-				setPlantName('');
-				setPlantImage(null);
-				setPlantSpecies('');
-				setSpecies();
-			})
-			.catch((error) => {
-				console.log('Error while saving plant to firestore: ', error);
-				Alert.alert(
-					'Error',
-					'Something went wrong while adding your plant, please try again',
-					[{ text: 'Ok', style: 'cancel' }]
-				);
-			});
-		}
+            await setDoc(doc(db, 'plants', ogPlant.id), plant)
+            .then(() => {
+                console.log('Plant with id: ', ogPlant.id, ' updated in firestore: ', plant);
+
+                if (imageSelected) {
+                    uploadImage(ogPlant.id);
+                }
+
+                Alert.alert(
+                    'Success!',
+                    'Your changes were saved successfully. ',
+                    [{ text: 'Ok', style: 'default' }]
+                );
+
+            })
+            .catch((error) => {
+                console.log('Error while updating plant in firestore: ', error);
+                Alert.alert(
+                    'Error!',
+                    'Something went wrong while updating your plant, please try again.',
+                    [{ text: 'Ok', style: 'cancel' }]
+                );
+            });
+        }
 	};
 
-	return (
-		<ScrollView>
+    return (
+        <ScrollView>
 			<View style={styles.inputContainer}>
-				
 				{plantImage ? (
 					<Image style={styles.addImage} source={{ uri: plantImage }} />
 				) : (
 					<Image
 						style={styles.addImage}
-						source={require('../../assets/images/add-image-icon.png')}
+						source={require('../assets/images/add-image-icon.png')}
 					/>
 				)}
 				<Button
@@ -159,6 +174,7 @@ export default function AddPlantsScreen({ navigation }) {
 				<View style={styles.selectContainer}>
 					<SelectList
 						data={species}
+						defaultOption={initialSpecies}
 						setSelected={setPlantSpecies}
 						placeholder='Select species'
 					/>
@@ -182,21 +198,21 @@ export default function AddPlantsScreen({ navigation }) {
 							<Text style={styles.buttonText}>Add irrigator</Text>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity onPress={addPlant} style={styles.buttonClickContain}>
+					<TouchableOpacity onPress={updatePlant} style={styles.buttonClickContain}>
 						<Image
 							style={styles.doneImage}
-							source={require('../../assets/images/done-icon.png')}
+							source={require('../assets/images/done-icon.png')}
 						/>
 					</TouchableOpacity>
 				</View>
 			</View>
-		</ScrollView>
-	);
+    	</ScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
 	inputContainer: {
-		flexGrow: 1,
+		flex: 1,
 		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
@@ -243,10 +259,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: width * 1,
-		// borderColor: 'red',
-		// borderWidth: 1,
-		marginTop: height * 0.04,
+		width: '100%',
+		marginTop: 50,
 	},
 
 	button: {
@@ -255,7 +269,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'flex-start',
 		borderRadius: 64,
-		width: width * 0.7,
+		width: 300,
 		padding: 12,
 		height: 55,
 	},
@@ -279,9 +293,6 @@ const styles = StyleSheet.create({
 	icon: {
 		color: 'white',
 		marginLeft: 10,
-		marginRight: 20,
+		marginRight: 30,
 	},
-	spacer: {
-		height:300
-	}
 });

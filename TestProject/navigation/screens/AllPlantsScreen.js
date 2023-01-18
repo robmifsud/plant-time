@@ -25,25 +25,20 @@ export default function HomeScreen({ navigation }) {
 		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
 		const tempArray = [];
 		const db = getFirestore();
-		const querySnapshot = await getDocs(
-			query(
-				collection(db, 'plants'),
-				where('userId', '==', getAuth().currentUser.uid)
-			)
-		);
-		// const querySnapshot = await getDocs(collection(db, 'plants'));
-		querySnapshot.forEach((doc) => {
+		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
+		querySnapshot.forEach(doc => {
 			const dict = {
 				// id : doc.ref.path,
-				id: doc.id,
-				plantName: doc.get('plantName'),
-				plantImage: doc.get('plantImage'),
-				speciesId: doc.get('speciesId'),
-				statusId: doc.get('statusId'),
-				userId: doc.get('userId'),
-			};
-			tempArray.push(dict);
-		});
+				// ref: doc.ref,
+				id : doc.id,
+				plantName : doc.get('plantName'),
+				plantImage : doc.get('plantImage'),
+				speciesId : doc.get('speciesId'),
+				statusId : doc.get('statusId'),
+				userId : doc.get('userId')
+			}
+			tempArray.push(dict)
+		})
 
 		setPlantsRef(tempArray);
 	};

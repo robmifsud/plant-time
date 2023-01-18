@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "TestProject",
+    "name": "PlantTime",
     "slug": "TestProject",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/iconPlant.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -18,7 +18,9 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier" : "com.heretic.TestProject",
+      "buildNumber" : "1.0.0"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -26,7 +28,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.heretic.TestProject"
+      "package": "com.heretic.TestProject",
+      "versionCode" : 1
     },
     "web": {
       "favicon": "./assets/favicon.png"

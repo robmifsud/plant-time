@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, Image, Button } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import MainContainer from './navigation/MainContainer';
 import 'expo-dev-client';
 import { useState, useEffect } from 'react';
@@ -52,19 +52,92 @@ function App(){
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
+      marginBottom: 300,
+    },
+    textContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    plantText: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      color: '#80b742',
+    },
+    timeText: {
+    fontSize: 32,
+    fontWeight: 'regular',
+    textAlign: 'center',
+    color: '#000',
+    },
+    subtitle: {
+      fontSize: 18,
+      textAlign: 'center',
+      color: '#888',
+      marginTop: 8,
+    },
+    button: {
+      backgroundColor: '#fff',shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.23,
+      shadowRadius: 2.62,
+      
+      elevation: 4,
+      
+      elevation: 10,
+      padding: 12,
+      borderRadius: 4,
+      marginTop: 24,
+      alignItems: 'center',
+      flexDirection: 'row'
+    },
+    logoContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 150,
+    },
+    
+    logo: {
+      width: 200,
+      height: 200,
+      resizeMode: 'contain',
+    },
+    glogo: {
+      width: 20,
+      height: 20,
+      marginRight: 8
+    },
+    buttonText: {
+      fontSize: 18,
+      fontWeight: '500',
+      color: '#000',
     },
   });
   
   if(!user){
     return (
       <View style={styles.container}>
-        <Button
-          disabled={!request}
-          title="Login"
-          onPress={() => {
+        <View style={styles.logoContainer}>
+      <Image source={require('./assets/images/logo.png')} style={styles.logo} /><
+        View style={styles.textContainer}>
+        <Text style={styles.plantText}>Plant</Text>
+        <Text style={styles.timeText}>Time</Text>
+        </View>
+        <Text style={styles.subtitle}>Grow Smart, Monitor Easily</Text>
+        </View>
+      
+        <TouchableOpacity style={styles.button} disabled={!request} onPress={() => {
             promptAsync();
-          }}
-          />
+          }}>
+
+          <Image source={require('./assets/images/googil.png')} style={styles.glogo} />
+          <Text style={styles.buttonText}>Continue with Google</Text>
+          </TouchableOpacity>
+
       </View>
     );
   }

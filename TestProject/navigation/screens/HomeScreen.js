@@ -9,7 +9,6 @@ import {
 	Dimensions,
 } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
 import {
@@ -20,7 +19,6 @@ import {
 	query,
 } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
-import { ref } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 
 const { width, height } = Dimensions.get('window');
@@ -32,14 +30,8 @@ export default function HomeScreen({ navigation }) {
 	const fetchData = async () => {
 		const tempArray = [];
 		const db = getFirestore();
-		const querySnapshot = await getDocs(
-			query(
-				collection(db, 'plants'),
-				where('userId', '==', getAuth().currentUser.uid)
-			)
-		);
-		// const querySnapshot = await getDocs(collection(db, 'plants'));
-		querySnapshot.forEach((doc) => {
+		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
+		querySnapshot.forEach(doc => {
 			const dict = {
 				id: doc.id,
 				plantName: doc.get('plantName'),
@@ -93,9 +85,9 @@ export default function HomeScreen({ navigation }) {
 			</View>
 			<View style={styles.section}>
 				<View style={styles.uppercard}>
-					<Text style={styles.subtitle}>Plants:</Text>
+					<Text style={styles.subtitle}>Plants</Text>
 					<Pressable
-						onPress={() => navigation.navigate('All Plants')}
+						onPress={() => navigation.navigate('AllPlantsStack')}
 						android_ripple={{ borderless: true, radius: 20 }}
 					>
 						<Text style={styles.subtitlebutton}>View All</Text>
@@ -144,6 +136,7 @@ const styles = StyleSheet.create({
 		padding: 10,
 		paddingBottom: 0,
 		paddingLeft: 20,
+		
 	},
 	subtitlebutton: {
 		paddingBottom: 0,
@@ -152,7 +145,7 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 	notification: {
-		fontSize: 18,
+		fontSize: 13,
 		textDecorationLine: 'underline',
 		color: '#ffb74d',
 	},
@@ -161,15 +154,17 @@ const styles = StyleSheet.create({
 		margin: 8,
 		borderColor: '#fbeed5',
 		borderWidth: 2,
+		borderRadius: 5,
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'space-between',
+		justifyContent: 'center',
 	},
 	bottomcard: {
 		padding: 20,
 		marginTop: 10,
 		borderColor: '#fbeed5',
 		borderWidth: 2,
+		
 	},
 	upperbox: {
 		alignItems: 'center',
@@ -186,19 +181,23 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+		
 	},
 	box: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		
 	},
 	subtitlebox: {
 		marginLeft: 10,
 		fontSize: 25,
+		
 	},
 	titlebox: {
 		marginLeft: 10,
 		fontSize: 35,
 		fontWeight: 'bold',
+		
 	},
 	flexrow: {
 		flexDirection: 'row',
