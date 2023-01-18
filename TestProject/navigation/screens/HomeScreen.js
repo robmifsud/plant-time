@@ -20,12 +20,14 @@ import {
 } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
 	const [plants, setPlants] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
+	const navigator = useNavigation();
 
 	const fetchData = async () => {
 		const tempArray = [];
@@ -46,18 +48,26 @@ export default function HomeScreen({ navigation }) {
 		setPlants(tempArray);
 	};
 
-	useEffect(() => {
+	useEffect(() =>{
 		fetchData();
 	}, []);
+
+	useEffect(() => {
+		const unsubscribe = navigator.addListener('focus', () => {
+			// Handle callback here
+			fetchData();
+		});
+		return unsubscribe;
+	}, [navigator])
 
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
 		fetchData()
-			.then(() => setRefreshing(false))
-			.catch((error) => {
-				console.log('Refresh error: ', error);
-				setRefreshing(false);
-			});
+		.then(() => setRefreshing(false))
+		.catch(error =>{
+			console.log('Refresh error: ', error)
+			setRefreshing(false)
+		})
 	}, []);
 
 	return (

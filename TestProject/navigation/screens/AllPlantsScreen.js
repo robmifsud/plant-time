@@ -16,10 +16,12 @@ import {
 } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');import { useNavigation } from "@react-navigation/native";
+
 export default function HomeScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
+	const navigator = useNavigation();
 
 	const fetchData = async () => {
 		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
@@ -45,7 +47,15 @@ export default function HomeScreen({ navigation }) {
 
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [])
+
+	useEffect(() => {
+		const unsubscribe = navigator.addListener('focus', () => {
+			// Handle callback here
+			fetchData();
+		});
+		return unsubscribe;
+	}, [navigator])
 
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
