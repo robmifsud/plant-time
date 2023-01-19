@@ -45,12 +45,14 @@ export default function MainContainer() {
 						return <Icon name={iconName} size={30} />;
 					},
 					tabBarStyle: { height: Platform.select({ios:85, android:65}), paddingTop: Platform.select({ios: 5, android: 7.5}) },
+					tabBarActiveTintColor: '#80b742',
+					tabBarInactiveTintColor: 'grey',
+					tabBarLabelStyle: {
+						paddingBottom: Platform.select({ios: 5, android: 10}), 
+						fontSize: 10
+					},
 				})}
-				tabBarOptions={{
-					activeTintColor: '#80b742',
-					inactiveTintColor: 'grey',
-					labelStyle: { paddingBottom: Platform.select({ios: 5, android: 10}), fontSize: 10 },
-				}}
+
 			>
 				{/* the icons and names at the bottom & top */}
 				{/* <Tab.Screen name={homeName} component={HomeScreen} options={{headerShown : true}}/> */}

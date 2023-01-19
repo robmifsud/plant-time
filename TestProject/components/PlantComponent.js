@@ -55,10 +55,19 @@ const PlantComponent = (props) => {
 				<Card.Cover
 					source={{ uri: plant.plantImage }}
 					style={{
-						borderBottomEndRadius: 0,
-						borderBottomLeftRadius: 0,
+						// borderBottomEndRadius: 0,
+						// borderBottomLeftRadius: 0,
 						backgroundColor: 'white',
-					}}
+						// backgroundColor: 'transparent',
+						shadowColor: "#000000",
+						shadowOffset: {
+						width: 0,
+						height: 1,
+						},
+						shadowOpacity:  0.16,
+						shadowRadius: 1.51,
+						elevation: 2
+					}} 
 				/>
 				<View
 					style={{
@@ -80,8 +89,9 @@ const PlantComponent = (props) => {
 						<Pressable
 							style={{ marginTop: 4 }}
 							android_ripple={{ borderless: true, radius: 20 }}
+							onPress={editPlant}
 						>
-							<Icon name='pencil' color='white' size={25} onPress={editPlant} />
+							<Icon name='pencil' color='white' size={25} />
 						</Pressable>
 						<Pressable style={styles.box} android_ripple={{ borderless: true, radius: 20 }}>
 							<Icon name='list' color='white' size={35} />

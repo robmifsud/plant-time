@@ -104,7 +104,7 @@ export default function HomeScreen({ navigation }) {
 					<Text style={styles.subtitle}>Your Plants:</Text>
 					<Pressable
 						onPress={() => navigation.navigate('AllPlantsStack')}
-						android_ripple={{ borderless: true, radius: 20 }}
+						android_ripple={{ borderless: false}}
 					>
 						<Text style={styles.subtitlebutton}>View All</Text>
 					</Pressable>

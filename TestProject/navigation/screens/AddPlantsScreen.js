@@ -41,6 +41,7 @@ export default function AddPlantsScreen({ navigation }) {
 	const [sensorModal, setSensorModal] = useState(false);
 	const [sensorModelNo, setSensorModelNo] = useState('');
 	const [moistureSensorId, setMoistureSensorId] = useState('');
+	// TO DO: state to hanle no sensor selected?
 
 	useEffect(() => {
 		async function getSpecies() {
@@ -49,6 +50,7 @@ export default function AddPlantsScreen({ navigation }) {
 			let array = querySnapshot.docs.map((doc) => {
 				return { key: doc.ref.path, value: doc.data().speciesName };
 			});
+			// array.push({key: 'none', value: 'Select Species'})
 			setSpecies(array);
 		}
 		getSpecies();
@@ -96,6 +98,7 @@ export default function AddPlantsScreen({ navigation }) {
 
 	const addPlant = async () => {
 		if(plantName === '' || plantSpecies === ''){
+			console.log('Name: ', plantName, "  ", 'Species: ', plantSpecies)
 			Alert.alert(
 				'Warning',
 				'Please fill in all the fields and try again.',
@@ -120,9 +123,8 @@ export default function AddPlantsScreen({ navigation }) {
 				
 				// Reset states
 				setPlantName('');
-				setPlantImage(null);
-				setPlantSpecies('');
-				setSpecies();
+				setPlantImage(sampleUri);
+				// setPlantSpecies('none');
 				setMoistureSensorId('');
 				setSensorModelNo('');
 			})
@@ -194,6 +196,8 @@ export default function AddPlantsScreen({ navigation }) {
 					<SelectList
 						data={species}
 						setSelected={setPlantSpecies}
+						save='key'
+						// defaultOption={{ key: 'none', value: 'Select species' }}
 						placeholder='Select species'
 					/>
 				</View>
