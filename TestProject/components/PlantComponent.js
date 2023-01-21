@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
 		// overflow: 'hidden',
 		// height: 100,
 		width: width * 0.95,
-		marginBottom: 20,
+		marginBottom: 10,
 	},
 	upperbox: {
 		flex: 1,
