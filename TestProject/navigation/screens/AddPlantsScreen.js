@@ -16,6 +16,7 @@ import { useState, useEffect, use } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
+import * as globalStyles from '../../styles/globalStyles';
 import * as ImagePicker from 'expo-image-picker';
 import 'firebase/app';
 import { getAuth } from 'firebase/auth';
@@ -29,6 +30,7 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import sampleImage from '../../assets/iconPlant.png'
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get('window');
 
@@ -43,6 +45,8 @@ export default function AddPlantsScreen({ navigation }) {
 	const [moistureSensorId, setMoistureSensorId] = useState('');
 	// TO DO: state to hanle no sensor selected?
 
+	const navigator = useNavigation();
+
 	useEffect(() => {
 		async function getSpecies() {
 			const db = getFirestore();
@@ -50,7 +54,6 @@ export default function AddPlantsScreen({ navigation }) {
 			let array = querySnapshot.docs.map((doc) => {
 				return { key: doc.ref.path, value: doc.data().speciesName };
 			});
-			// array.push({key: 'none', value: 'Select Species'})
 			setSpecies(array);
 		}
 		getSpecies();
@@ -124,9 +127,17 @@ export default function AddPlantsScreen({ navigation }) {
 				// Reset states
 				setPlantName('');
 				setPlantImage(sampleUri);
-				// setPlantSpecies('none');
 				setMoistureSensorId('');
 				setSensorModelNo('');
+
+				Alert.alert(
+					'Success',
+					'Your plant has successfully been created',
+					[{ text: 'Ok', style: 'cancel' }]
+				);
+
+				navigator.navigate('AllPlants');
+
 			})
 			.catch((error) => {
 				console.log('Error while saving plant to firestore: ', error);
@@ -179,11 +190,13 @@ export default function AddPlantsScreen({ navigation }) {
 						source={require('../../assets/images/add-image-icon.png')}
 					/>
 				)}
-				<Button
+				<TouchableOpacity
 					style={styles.uploadImageButton}
-					title='Upload Image'
 					onPress={addImage}
-				/>
+				>
+					<Icon name='image' size={25} style={styles.plusIcon} />
+					<Text style={{color: 'white', fontSize: 16}}>Upload Image</Text>
+				</TouchableOpacity>
 				<View style={styles.textInput}>
 					<TextInput
 						placeholder='Name'
@@ -192,22 +205,17 @@ export default function AddPlantsScreen({ navigation }) {
 						onChangeText={(plantName) => setPlantName(plantName)}
 					/>
 				</View>
-				<View style={styles.selectContainer}>
-					<SelectList
-						data={species}
-						setSelected={setPlantSpecies}
-						save='key'
-						// defaultOption={{ key: 'none', value: 'Select species' }}
-						placeholder='Select species'
-					/>
-				</View>
 				<View style={styles.buttonContainer}>
-					{/* <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
-						<View style={styles.button}>
-							<Icon name='thermometer-1' size={25} style={styles.icon} />
-							<Text style={styles.buttonText}>Add temperature sensor</Text>
-						</View>
-					</TouchableOpacity> */}
+					<View style={styles.selectContainer}>
+						<SelectList
+							data={species}
+							setSelected={setPlantSpecies}
+							dropdownStyles={[styles.selectBox, styles.selectDrop]}
+							save='key'
+							boxStyles={styles.selectBox}
+							placeholder='Select species'
+						/>
+					</View>
 					<TouchableOpacity onPress={() => {setSensorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<Icon name='tint' size={25} style={styles.icon} />
@@ -219,9 +227,6 @@ export default function AddPlantsScreen({ navigation }) {
 						animationType="fade"
 						transparent={true}
 						visible={sensorModal}
-						// onRequestClose={() => {
-						// 	Alert.alert('Sensor has been added.');
-						// }}
 					>
 						<View style={styles.modalContainer}>
 							<View style={styles.cardContainer}>
@@ -275,12 +280,24 @@ const styles = StyleSheet.create({
 
 	uploadImageButton: {
 		marginTop: 20,
+		marginBottom: 20,
+		paddingVertical: 10,
+		paddingHorizontal: 15,
+		elevation: 4,
+		backgroundColor: globalStyles.secondary,
+		borderRadius: 4,
+		flexDirection: 'row',
+		alignItems: 'center'
 	},
+	plusIcon:{
+		color: 'white',
+		marginRight: 20,
 
+	},
 	selectContainer: {
 		marginTop: 20,
 		alignSelf: 'center',
-		width: '70%',
+		width: '80%',
 		maxWidth: 600,
 	},
 
@@ -300,7 +317,7 @@ const styles = StyleSheet.create({
 		borderColor: '#ABB5BE',
 		padding: 10,
 		marginBottom: 18,
-		width: '70%',
+		width: '80%',
 	},
 
 	addImage: {
@@ -315,22 +332,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: width * 1,
-		// borderColor: 'red',
-		// borderWidth: 1,
-		marginTop: height * 0.04,
 	},
 
 	button: {
 		flexDirection: 'row',
-		backgroundColor: '#fff',
-		shadowColor: "#000",
-		shadowOffset: {
-		  width: 0,
-		  height: 1,
-		},
-		shadowOpacity: 0.23,
-		shadowRadius: 2.62,
-		
 		elevation: 10,
 		padding: 12,
 		borderRadius: 4,
@@ -339,24 +344,30 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
 		borderRadius: 5,
-		width: 300,
-		height: 55, backgroundColor: '#fff'
+		width: '100%',
+		height: 55, 
+		backgroundColor: '#fff'
 	},
 	
 	submit: {
 		flexDirection: 'row',
-		backgroundColor: '#3a5a40',
+		backgroundColor: globalStyles.primary,
 		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'space-between',
 		borderRadius: 5,
-		width: 200,
-		padding: 12,
-		marginTop: 35,
-		marginTop: 35,
-		height: 55,
+		paddingHorizontal: 20,
+		paddingVertical: 15,
 	},
-
-	
+	selectBox:{
+		backgroundColor: 'white',
+		borderColor: 'white',
+		borderWidth: 0,
+		borderRadius: 4,
+		elevation: 8,
+	},
+	selectDrop:{
+		backgroundColor: globalStyles.background,
+	},
 	submitText: {
 		color: 'white',
 		fontSize: 16,
@@ -365,11 +376,13 @@ const styles = StyleSheet.create({
 
 	submitIcon: {
 		color: 'white',
-		marginLeft: 10,
 		marginRight: 20,
 	},
 	buttonClickContain: {
-		marginBottom: 24,
+		width: '80%',
+		marginBottom: 40,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 
 	buttonText: {

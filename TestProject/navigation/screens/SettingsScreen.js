@@ -1,39 +1,22 @@
 import * as React from 'react';
-import {Button, ScrollView, View, Text, StyleSheet, Pressable, FlatList, PixelRatio, TouchableOpacity} from 'react-native';
+import {Button, ScrollView, View, Text, StyleSheet, Pressable, FlatList, PixelRatio, TouchableOpacity, SafeAreaView} from 'react-native';
 import { getAuth, signOut } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as globalStyles from '../../styles/globalStyles';
 import Modal from "react-native-modal";
 import AccordionItem from '../../components/AccordionItem';
+import {useRoute, useNavigation} from "@react-navigation/native";
 
 export default function SettingsScreen({navigation}){
+    const navigator = useNavigation();
 
-    const [isModalFAQVisible, setIsModalFAQVisible] = React.useState(false);
-    const [isModalChangePasswordVisible, setIsModalChangePasswordVisible] = React.useState(false);
-
-    const handleFAQModal = () => setIsModalFAQVisible(() => !isModalFAQVisible);
-    const handleChangePasswordModal = () => setIsModalChangePasswordVisible(() => !isModalChangePasswordVisible);
-
-    const data = [
-      {
-          id: 0,
-          title: 'How do you add a Plant?',
-          body: "To add a plant simply",
-      },
-      {
-          id: 1,
-          title: 'How do I add a Plant sensor?',
-          body: "To add a plant simply",
-      },
-      {
-          id: 2,
-          title: 'How do I identify the state of my plant?',
-          body: "To add a plant simply",
-      },
-    ];
-
-    const logout = async() =>{
-        await signOut(getAuth()).catch(error => console.log('signOut error: ', error));
+    const logout = async() => {
+        navigator.push('LogOut')
     }
+    const faq = async() => {
+        navigator.push('Faq')
+    }
+    
     const styles = StyleSheet.create({
       modalcontainer:{
         flex: 1,
@@ -117,65 +100,25 @@ export default function SettingsScreen({navigation}){
       });
 
     return(
-      <View style={{flex:1, paddingTop: "10%", paddingLeft: "4%", paddingRight: "4%",}}>
+      <View style={{flex:1, paddingTop: 20, paddingLeft: "4%", paddingRight: "4%",}}>
         <View style={{marginBottom: "20%",}}>
-            <Pressable style={{borderColor: "#000000", backgroundColor:'#3a5a40', padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8 }} onPress={handleChangePasswordModal} android_ripple={{borderless:true, radius:20}}>
+            <TouchableOpacity style={{borderColor: "#000000", backgroundColor:globalStyles.primary, padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8 }} onPress={logout} android_ripple={{borderless:true, radius:20}}>
                 <View style={{alignItems: "center", flexDirection: "row",}}>
                     <Icon style = {{color: 'white', marginLeft: "5%", marginRight: "5%"}} name= 'log-out-outline' size={PixelRatio.getPixelSizeForLayoutSize(12)}/>
                     <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
-                        Log out
+                        Log Out
                     </Text>
                 </View>
-            </Pressable>
-            <Modal style = {{margin: 0, backgroundColor: "#FDFDF7" }} isVisible={isModalChangePasswordVisible}>
-                <ScrollView style={{}}>
-                    <Text style={{paddingTop: "5%",backgroundColor:'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(8), borderBottomColor: '#3a5a40', borderBottomWidth: 1, paddingBottom: 7, fontWeight: 'bold', paddingLeft: "4%", paddingRight: "4%", marginBottom: "4%"}}>
-                        Do you wish to log out?
-                    </Text>
-                    <View style={{paddingLeft: "4%", paddingRight: "4%"}}>
-                      <Pressable style={{alignItems: 'center', backgroundColor:'white', padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={logout}>
-                        <Text style={{color: 'black', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
-                            Log out
-                        </Text>
-                      </Pressable>
-                      <Pressable style={{alignItems: 'center', backgroundColor:'#3a5a40', padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={handleChangePasswordModal}>
-                        <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
-                            Close
-                        </Text>
-                      </Pressable>
-                    </View>                       
-                    
-                </ScrollView>
-            </Modal>
-            <Pressable style={{borderColor: "#000000", backgroundColor:'#3a5a40', padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8 }} onPress={handleFAQModal} android_ripple={{borderless:true, radius:20}}>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{borderColor: "#000000", backgroundColor:globalStyles.primary, padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8 }} onPress={faq} android_ripple={{borderless:true, radius:20}}>
                 <View style={{alignItems: "center", flexDirection: "row",}}>
                     <Icon style = {{color: 'white', marginLeft: "5%", marginRight: "5%"}} name= 'help-circle-outline' size={PixelRatio.getPixelSizeForLayoutSize(12)}/>
                     <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
                         FAQ
                     </Text>
                 </View>
-            </Pressable>
-            <Modal style = {{margin: 0, backgroundColor: "#FDFDF7"}} isVisible={isModalFAQVisible}>
-                <ScrollView style={{}}>
-                    <Text style={{paddingTop: "5%", backgroundColor:'white' ,fontSize: PixelRatio.getPixelSizeForLayoutSize(8), borderBottomColor: '#3a5a40', borderBottomWidth: 1, paddingBottom: 7, fontWeight: 'bold', paddingLeft: "4%", paddingRight: "4%", marginBottom: "4%"}}>
-                        FAQ:
-                    </Text>
-                    <View style={{paddingLeft: "4%", paddingRight: "4%"}}>
-                        <FlatList
-                            data = {data}
-                            keyExtractor = {(item) => item.id.toString()}
-                            renderItem = {({item}) => (<AccordionItem title= {item.title} bodyText = {item.body}/>
-                            )}
-                        />
-                        <Pressable style={{alignItems: 'center', backgroundColor:'#3a5a40', padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', marginBottom: "5%"}} onPress={handleFAQModal}>
-                            <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
-                                Close
-                            </Text>
-                        </Pressable>
-                    </View>
-                    
-                </ScrollView>
-            </Modal>
+            </TouchableOpacity>
         </View>
     </View>
     );

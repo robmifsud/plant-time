@@ -1,0 +1,24 @@
+General Functionality:
+    ☐ Add irrigator
+    ☐ Details page
+    ☐ Add more species with soil values
+    ☐ Subsystem to change moisture values
+
+Home Screen:
+    ☐ Notifications
+
+Log Out:
+    ☐ Make sub title better looking
+
+Edit plant:
+    ☐ Redirect after successful update?
+    ☐ Change styling
+
+Details page:
+    ☐ Photo
+    ☐ Name
+    ☐ Species
+    ☐ Current moisture level
+    ☐ Toggle auto: maitain moisture automatically
+    ☐ Not auto: irrigate manually in increments
+    
