@@ -3,14 +3,12 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	Pressable,
 	ScrollView,
 	RefreshControl,
 	Dimensions,
 } from 'react-native';
 import { useState, useEffect, useCallback } from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/SimpleLineIcons';
+import * as globalStyles from '../../styles/globalStyles'
 import {
 	getFirestore,
 	getDocs,
@@ -21,6 +19,7 @@ import {
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 
@@ -83,60 +82,19 @@ export default function HomeScreen({ navigation }) {
 				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 			}
 		>
-			<View style={styles.section}>
-				<Text style={styles.subtitle}>No New Notifications</Text>
-				{/* <View style={styles.notificationcard}>
-					<View style={styles.flexrow}>
-						<Icon style={styles.icon} name='warning' size={30} />
-						<Text style={styles.notification}>Daisy is not receiving enough sun</Text>
-					</View>
-					<Pressable
-						style={styles.pressable}
-						onPress={() => this.changeText('Check')}
-						android_ripple={{ borderless: true, radius: 20 }}
-					>
-						<Icon style={styles.close} name='close-outline' size={30} />
-					</Pressable>
-				</View> */}
+			<View style={styles.notifSection}>
+				<Text style={[styles.subtitle, styles.noNotif]}>No New Notifications</Text>
 			</View>
 			<View style={styles.section}>
 				<View style={styles.uppercard}>
 					<Text style={styles.subtitle}>Your Plants:</Text>
-					<Pressable
+					<TouchableOpacity
 						onPress={() => navigation.navigate('AllPlantsStack')}
-						android_ripple={{ borderless: true, radius: 20 }}
+						android_ripple={{ borderless: false}}
 					>
-						<Text style={styles.subtitlebutton}>View All</Text>
-					</Pressable>
+						<Text style={styles.subtitleButton}>View All</Text>
+					</TouchableOpacity>
 				</View>
-				{/* <View style={styles.bottomcard}>
-					<View style={styles.upperbox}>
-						<Text style={styles.titlebox}>Daisy</Text>
-						<Icon2 style={styles.iconbox} name='ghost' size={80} />
-					</View>
-					<View style={styles.lowerbox}>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('All Plants')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='list' size={50} />
-								<Text style={styles.subtitlebox}>Details</Text>
-							</Pressable>
-						</View>
-						<View>
-							<Pressable
-								style={styles.box}
-								onPress={() => navigation.navigate('Edit Plant')}
-								android_ripple={{ borderless: true, radius: 20 }}
-							>
-								<Icon name='pencil' size={50} />
-								<Text style={styles.subtitlebox}>Edit</Text>
-							</Pressable>
-						</View>
-					</View>
-				</View> */}
 				{plants.map((item) => {
 					return <PlantComponent key={item.id} plant={item} />;
 				})}
@@ -151,13 +109,28 @@ const styles = StyleSheet.create({
 		fontWeight: '',
 		padding: 10,
 		paddingBottom: 0,
-		paddingLeft: 20,
+		marginLeft: 5,
 	},
-	subtitlebutton: {
-		paddingBottom: 0,
-		fontSize: 20,
+	noNotif: {
+		opacity: 0.4,
+	},
+	uppercard: {
+		justifyContent: 'space-between',
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		marginBottom: 15,
+	},
+	subtitleButton: {
+		paddingBottom: 8,
+		paddingTop: 8,
+		marginRight: 5,
+		marginTop:5,
+		fontSize: 14,
 		fontWeight: '600',
 		padding: 10,
+		borderRadius: 4,
+		backgroundColor: globalStyles.secondary,
+		color: 'white'
 	},
 	notification: {
 		fontSize: 13,
@@ -229,27 +202,14 @@ const styles = StyleSheet.create({
 	section: {
 		marginBottom: 40,
 	},
-	uppercard: {
-		justifyContent: 'space-between',
-		flexDirection: 'row',
-		alignItems: 'flex-end',
-		marginBottom: 20,
+	notifSection: {
+		marginBottom: 25,
 	},
 	containermain: {
 		flexGrow: 1,
 		width: width,
 		marginBottom: 40,
-		marginTop: 40,
-		// flexDirection: 'column',
+		marginTop: 25,
 		alignItems: 'center',
-		// justifyContent: 'flex-start',
-		// flex: 1,
-		// width: width,
-		// backgroundColor: 'white',
-		//paddingTop: 10,
-		// paddingBottom: 40,
-		// marginBottom: 40,
-		//paddingLeft: 20,
-		//paddingRight: 20,
 	},
 });

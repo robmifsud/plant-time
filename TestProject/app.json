@@ -29,7 +29,20 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.heretic.TestProject",
-      "versionCode" : 1
+      "versionCode" : 1,
+      "intentFilters": [
+        {
+        "action": "VIEW",
+        "data": [
+            {
+            "scheme": "https",
+            "host": "planttime-87863.firebaseapp.com",
+            "pathPrefix": "/"
+            }
+        ],
+        "category": ["BROWSABLE", "DEFAULT"]
+        }
+    ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

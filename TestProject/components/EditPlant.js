@@ -248,9 +248,6 @@ export default function EditPlant({ navigation }){
 						animationType="fade"
 						transparent={true}
 						visible={sensorModal}
-						// onRequestClose={() => {
-						// 	Alert.alert('Sensor has been added.');
-						// }}
 					>
 						<View style={styles.modalContainer}>
 							<View style={styles.cardContainer}>
@@ -289,7 +286,7 @@ export default function EditPlant({ navigation }){
 						</View>
 					</TouchableOpacity>
 					<TouchableOpacity onPress={updatePlant} style={styles.buttonClickContain}>
-					<View style={styles.updateButton}>
+						<View style={styles.updateButton}>
 							<Icon2 name='check' size={15} style={styles.updateIcon} />
 							<Text style={styles.updateText}>Update Plant</Text>
 						</View>

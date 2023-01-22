@@ -4,27 +4,18 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	Pressable,
-	ScrollView,
-	Image,
 	Dimensions,
 	TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Icon3 from 'react-native-vector-icons/Feather';
+import * as globalStyles from '../styles/globalStyles'
 import { useNavigation } from '@react-navigation/native';
-import { browserPopupRedirectResolver } from '@firebase/auth';
 import {
 	Card,
-	Title,
-	Paragraph,
-	LeftContent,
-	Button,
 } from 'react-native-paper';
 
 const { width, height } = Dimensions.get('window');
 const PlantComponent = (props) => {
-	const [imageUrl, setImageUrl] = useState(null);
 	const [plant, setPlant] = useState({});
 	const navigation = useNavigation();
 
@@ -41,7 +32,7 @@ const PlantComponent = (props) => {
 	return (
 		<View style={styles.cardContainer}>
 			<Card style={styles.mainContent}>
-				<Card.Cover source={{ uri: plant.plantImage }} />
+				<Card.Cover source={{ uri: plant.plantImage }} style={styles.cardCover}/>
 				<View style={styles.subContent}>
 					<View style={styles.textBox}>
 						{plant ? (
@@ -51,18 +42,19 @@ const PlantComponent = (props) => {
 						)}
 					</View>
 					<View style={styles.iconContainer}>
-						<Pressable
-							style={styles.editButton}
+						<TouchableOpacity
+							style={[styles.iconButton, styles.editButton]}
+							android_ripple={{ borderless: true, radius: 20 }}
+							onPress={editPlant}
+						>
+							<Icon name='pencil' color='white' size={25} />
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={[styles.detailsButton, styles.iconButton]}
 							android_ripple={{ borderless: true, radius: 20 }}
 						>
-							<Icon name='pencil' color='white' size={25} onPress={editPlant} />
-						</Pressable>
-						<Pressable
-							style={styles.detailsButton}
-							android_ripple={{ borderless: true, radius: 20 }}
-						>
-							<Icon name='list' color='white' size={35} />
-						</Pressable>
+							<Icon name='list' color='white' size={25.5} />
+						</TouchableOpacity>
 					</View>
 				</View>
 			</Card>
@@ -73,20 +65,28 @@ const PlantComponent = (props) => {
 export default PlantComponent;
 
 const styles = StyleSheet.create({
+	iconButton: {
+		padding: 5,
+		borderRadius: 2,
+		backgroundColor: globalStyles.secondary,
+		aspectRatio: 1/1,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
 	editButton: {
-		marginTop: 4,
+		marginRight: 6,
 	},
 	detailsButton: {
-		marginLeft: 12,
+		marginLeft: 6,
 	},
 
 	cardContainer: {
 		width: width * 0.95,
-		marginBottom: 20,
+		marginBottom: 10,
 	},
 
 	mainContent: {
-		backgroundColor: '#3a5a40',
+		backgroundColor: globalStyles.primary,
 		shadowColor: 'black',
 		shadowOffset: {
 			width: 0,
@@ -116,111 +116,13 @@ const styles = StyleSheet.create({
 
 	iconContainer: {
 		flexDirection: 'row',
+		alignSelf: 'flex-end',
 		padding: 12,
+		marginLeft: 'auto',
 	},
 
-	// Unused
-	// buttonContainer: {
-	// 	flexDirection: 'column',
-	// 	justifyContent: 'flex-end',
-	// 	alignItems: 'center',
-	// },
-	// plantImg: {
-	// 	//width: 100,
-	// 	//height: 100,
-	// 	//borderRadius: 50,
-	// 	//margin: 10,
-	// 	height: 125,
-	// 	width: 125,
-	// },
-	// subtitle: {
-	// 	fontSize: 30,
-	// 	fontWeight: 'bold',
-	// 	padding: 10,
-	// 	paddingBottom: 0,
-	// 	paddingLeft: 20,
-	// },
-	// subtitlebutton: {
-	// 	paddingBottom: 0,
-	// 	fontSize: 25,
-	// 	fontWeight: 'bold',
-	// 	padding: 10,
-	// },
-	// notification: {
-	// 	fontSize: 18,
-	// 	textDecorationLine: 'underline',
-	// 	color: '#ffb74d',
-	// },
-	// notificationcard: {
-	// 	backgroundColor: '#fcf8e3',
-	// 	margin: 8,
-	// 	borderColor: '#fbeed5',
-	// 	borderWidth: 2,
-	// 	flexDirection: 'row',
-	// 	alignItems: 'center',
-	// 	justifyContent: 'space-between',
-	// },
-
-	// upperbox: {
-	// 	flex: 1,
-	// 	alignItems: 'flex-start',
-	// 	//paddingBottom: 10,
-	// 	flexDirection: 'row',
-	// 	//justifyContent: 'space-between',
-	// 	//borderWidth: 1,
-	// 	alignSelf: 'stretch',
-	// 	borderColor: 'green',
-	// },
-	// iconbox: {
-	// 	padding: 10,
-	// },
-	// lowerbox: {
-	// 	borderColor: 'red',
-	// 	borderTopWidth: 2,
-	// 	paddingTop: 10,
-	// 	flexDirection: 'row',
-	// 	justifyContent: 'space-between',
-	// },
-	// box: {
-	// 	// flexDirection: 'row',
-	// 	// alignItems: 'center',
-	// 	// marginRight: 1,
-	// },
-	// subtitlebox: {
-	// 	marginLeft: 10,
-	// 	fontSize: 25,
-	// 	borderWidth: 2,
-	// 	//borderColor: 'green',
-	// },
-
-	// flexrow: {
-	// 	flexDirection: 'row',
-	// 	alignItems: 'center',
-	// 	padding: 10,
-	// },
-
-	// close: {
-	// 	color: '#ffb74d',
-	// 	textAlign: 'right',
-	// 	padding: 10,
-	// },
-	// pressable: {
-	// 	right: 0,
-	// },
-	// section: {
-	// 	marginBottom: 10,
-	// },
-	// uppercard: {
-	// 	justifyContent: 'space-between',
-	// 	flexDirection: 'row',
-	// 	alignItems: 'flex-end',
-	// },
-	// containermain: {
-	// 	flex: 1,
-	// 	backgroundColor: 'white',
-	// 	paddingTop: 40,
-	// 	paddingBottom: 40,
-	// 	paddingLeft: 20,
-	// 	paddingRight: 20,
-	// },
+	cardCover: {
+		backgroundColor: 'white',
+		elevation: 6
+	}
 });
