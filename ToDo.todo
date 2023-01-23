@@ -3,6 +3,7 @@ General Functionality:
     ☐ Details page
     ☐ Add more species with soil values
     ☐ Subsystem to change moisture values
+    ☐ Comments
 
 Home Screen:
     ☐ Notifications
@@ -11,8 +12,12 @@ Log Out:
     ☐ Make sub title better looking
 
 Edit plant:
-    ☐ Redirect after successful update?
-    ☐ Change styling
+    ✔ Redirect after successful update? @done (1/22/2023, 10:38:10 PM)
+    ✔ Change styling @done (1/23/2023, 1:22:01 AM)
+
+Soil Moisture:
+    ✔ Change modal styling @done (1/22/2023, 10:17:51 PM)
+    ✔ Delete sensor when deleting plant @done (1/23/2023, 3:09:22 AM)
 
 Details page:
     ☐ Photo
@@ -21,4 +26,3 @@ Details page:
     ☐ Current moisture level
     ☐ Toggle auto: maitain moisture automatically
     ☐ Not auto: irrigate manually in increments
-    

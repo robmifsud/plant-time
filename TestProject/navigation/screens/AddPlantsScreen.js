@@ -27,6 +27,7 @@ import {
 	addDoc,
 	updateDoc,
 	doc,
+	deleteDoc
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import sampleImage from '../../assets/iconPlant.png'
@@ -151,12 +152,20 @@ export default function AddPlantsScreen({ navigation }) {
 	};
 
 	const addSensor = async () => {
-		console.log('Test');
+		const db = getFirestore();
+		if (moistureSensorId != ''){
+			await deleteDoc(doc(db,'moistureSensors', moistureSensorId))
+			.then(() => {
+				console.log('Deleted sensor with id: ', moistureSensorId);
+				setMoistureSensorId('');
+			})
+			.catch(error => console.log('Error deleting sensor with id ', moistureSensorId, ' :', error))
+		}
 		const soilMoistureSensor = {
 			moistureLevel : 50,
 			modelNumber : sensorModelNo,
 		}
-		await addDoc(collection(getFirestore(),'moistureSensors'), soilMoistureSensor)
+		await addDoc(collection(db,'moistureSensors'), soilMoistureSensor)
 		.then((docRef) => {
 			console.log('Sensor with id: ',docRef.id ,'added to firestore.');
 			setMoistureSensorId(docRef.id);
@@ -200,6 +209,7 @@ export default function AddPlantsScreen({ navigation }) {
 				<View style={styles.textInput}>
 					<TextInput
 						placeholder='Name'
+						selectionColor={globalStyles.primary}
 						fontSize={20}
 						value={plantName}
 						onChangeText={(plantName) => setPlantName(plantName)}
@@ -232,7 +242,7 @@ export default function AddPlantsScreen({ navigation }) {
 							<View style={styles.cardContainer}>
 								<Text style={styles.modalTitle}>Add Sensor</Text>
 								<Text style={styles.modalSubtitle}>Model Number:</Text>
-								<TextInput style={styles.modalInput} value={sensorModelNo} onChangeText={(sensorModelNo) => setSensorModelNo(sensorModelNo)}></TextInput>
+								<TextInput style={styles.modalInput} selectionColor={globalStyles.primary} selectTextOnFocus={true} value={sensorModelNo} onChangeText={(sensorModelNo) => setSensorModelNo(sensorModelNo)}></TextInput>
 
 								<View style={styles.modalButtonRow}>
 									<TouchableOpacity
@@ -258,12 +268,12 @@ export default function AddPlantsScreen({ navigation }) {
 							<Text style={styles.buttonText}>Add irrigator</Text>
 						</View>
 					</TouchableOpacity> */}
-					<TouchableOpacity onPress={addPlant} style={styles.buttonClickContain}>
-					<View style={styles.submit}>
+					<View style={styles.buttonClickContain}>
+						<TouchableOpacity onPress={addPlant} style={styles.submit}>
 							<Icon2 name='check' size={15} style={styles.submitIcon} />
 							<Text style={styles.submitText}>Submit Plant</Text>
-						</View>
-					</TouchableOpacity>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</View>
 		</ScrollView>
@@ -279,11 +289,10 @@ const styles = StyleSheet.create({
 	},
 
 	uploadImageButton: {
-		marginTop: 20,
 		marginBottom: 20,
 		paddingVertical: 10,
 		paddingHorizontal: 15,
-		elevation: 4,
+		elevation: globalStyles.elevation,
 		backgroundColor: globalStyles.secondary,
 		borderRadius: 4,
 		flexDirection: 'row',
@@ -316,15 +325,15 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1.5,
 		borderColor: '#ABB5BE',
 		padding: 10,
-		marginBottom: 18,
+		marginBottom: 8,
 		width: '80%',
 	},
 
 	addImage: {
-		width: 80,
-		height: 80,
-		marginTop: 40,
-		marginBottom: 20,
+		width: 170,
+		height: 170,
+		marginTop: 20,
+		marginBottom: 10,
 	},
 
 	buttonContainer: {
@@ -336,7 +345,7 @@ const styles = StyleSheet.create({
 
 	button: {
 		flexDirection: 'row',
-		elevation: 10,
+		elevation: globalStyles.elevation,
 		padding: 12,
 		borderRadius: 4,
 		marginTop: 16,
@@ -357,13 +366,14 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		paddingHorizontal: 20,
 		paddingVertical: 15,
+		elevation: globalStyles.elevation,
 	},
 	selectBox:{
 		backgroundColor: 'white',
 		borderColor: 'white',
 		borderWidth: 0,
 		borderRadius: 4,
-		elevation: 8,
+		elevation: globalStyles.elevation,
 	},
 	selectDrop:{
 		backgroundColor: globalStyles.background,
@@ -419,7 +429,7 @@ const styles = StyleSheet.create({
 		width: '80%',
 		// height: '30%',
 		backgroundColor: 'white',
-		borderRadius: 12,
+		borderRadius: 5,
 		shadowColor: "#000",
 		shadowOffset: {
 			width: 0,
@@ -441,12 +451,12 @@ const styles = StyleSheet.create({
 		marginLeft: 6
 	},
 	modalInput:{
-		borderRadius: 6,
+		borderRadius: 4,
 		backgroundColor: 'rgba(58,90,64,0.2)',
 		paddingTop: 2,
 		paddingBottom: 2,
 		paddingLeft: 10,
-		marginBottom:24
+		marginBottom:24,
 	},
 	modalButtonRow:{
 		flexDirection: 'row',
@@ -454,13 +464,13 @@ const styles = StyleSheet.create({
 		marginTop: 'auto'
 	},
 	modalButton:{
-
+		elevation: 2,
 		flex:1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		width:'100%',
 		maxWidth:'45%',
-		borderRadius:8,
+		borderRadius:6,
 		padding:8,
 		fontSize:20,
 		fontWeight:'bold',

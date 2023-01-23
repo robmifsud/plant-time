@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Text, Pressable, PixelRatio} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as globalStyles from '../styles/globalStyles';
 
 const AccordionItem = ({title, bodyText}) => {
     const[showContent, setShowContent] = React.useState(false);
@@ -32,8 +33,8 @@ const AccordionItem = ({title, bodyText}) => {
 const styles = StyleSheet.create({
     card:{
         backgroundColor: 'white', 
-        borderRadius: 10, 
-        elevation: 5, 
+        borderRadius: 4, 
+        elevation: globalStyles.elevation, 
         marginTop:5,
         marginBottom: 15, 
         overflow: 'hidden',
