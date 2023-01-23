@@ -19,7 +19,7 @@ import { getAuth } from 'firebase/auth';
 import { useNavigation } from "@react-navigation/native";
 const { width, height } = Dimensions.get('window');
 
-export default function HomeScreen({ navigation }) {
+export default function AllPlantsScreen({ navigation }) {
 	const [plantsRef, setPlantsRef] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const navigator = useNavigation();

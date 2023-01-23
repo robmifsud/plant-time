@@ -44,13 +44,13 @@ export default function LogOut({navigation}){
                     Are your sure you want to Log Out?
                 </Text>
                 <View style={{paddingLeft: "4%", paddingRight: "4%"}}>
-                    <TouchableOpacity style={{alignItems: 'center', backgroundColor:'white', padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={logout}>
+                    <TouchableOpacity style={{alignItems: 'center', backgroundColor:'white', padding: "3%", borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={logout}>
                     <Text style={{color: 'black', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
                         Log Out
                     </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, padding: "3%", borderRadius: 10, elevation: 10, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={navigator.goBack}>
+                    <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, padding: "3%", borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={navigator.goBack}>
                     <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
                         Close
                     </Text>

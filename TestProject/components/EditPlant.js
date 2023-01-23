@@ -9,12 +9,14 @@ import {
 	Button,
 	Alert,
 	ScrollView,
-	Modal
+	Modal,
+	Dimensions,
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
+import * as globalStyles from '../styles/globalStyles';
 import * as ImagePicker from 'expo-image-picker';
 import 'firebase/app';
 import { getAuth } from 'firebase/auth';
@@ -30,6 +32,8 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {useRoute, useNavigation} from "@react-navigation/native";
+
+const { width, height } = Dimensions.get('window');
 
 export default function EditPlant({ navigation }){
     
@@ -143,6 +147,8 @@ export default function EditPlant({ navigation }){
                     [{ text: 'Ok', style: 'default' }]
                 );
 
+				navigator.navigate('AllPlants');
+
             })
             .catch((error) => {
                 console.log('Error while updating plant in firestore: ', error);
@@ -157,8 +163,18 @@ export default function EditPlant({ navigation }){
 
 	const deletePlant = async() =>{
 		const db = getFirestore();
+		if (moistureSensorId != ''){
+			await deleteDoc(doc(db,'moistureSensors', moistureSensorId))
+			.then(() => {
+				console.log('Deleted sensor with id: ', moistureSensorId);
+				setMoistureSensorId('');
+			})
+			.catch(error => console.log('Error deleting sensor with id ', moistureSensorId, ' :', error))
+		}
+
 		deleteDoc(doc(db,'plants',ogPlant.id))
 		.then(() =>{
+			console.log('Deleted plant with id: ',ogPlant.id);
 			Alert.alert(
 				'Success!',
 				'This plant has been deleted. ',
@@ -177,12 +193,20 @@ export default function EditPlant({ navigation }){
 	}
 
 	const addSensor = async () => {
-		console.log('Test');
+		const db = getFirestore();
+		if (moistureSensorId != ''){
+			await deleteDoc(doc(db,'moistureSensors', moistureSensorId))
+			.then(() => {
+				console.log('Deleted sensor with id: ', moistureSensorId);
+				setMoistureSensorId('');
+			})
+			.catch(error => console.log('Error deleting sensor with id ', moistureSensorId, ' :', error))
+		}
 		const soilMoistureSensor = {
 			moistureLevel : 50,
 			modelNumber : sensorModelNo,
 		}
-		await addDoc(collection(getFirestore(),'moistureSensors'), soilMoistureSensor)
+		await addDoc(collection(db,'moistureSensors'), soilMoistureSensor)
 		.then((docRef) => {
 			console.log('Sensor with id: ',docRef.id ,'added to firestore.');
 			setMoistureSensorId(docRef.id);
@@ -215,32 +239,37 @@ export default function EditPlant({ navigation }){
 						source={require('../assets/images/add-image-icon.png')}
 					/>
 				)}
-				<Button
+				<TouchableOpacity
 					style={styles.uploadImageButton}
-					title='Upload Image'
 					onPress={addImage}
-				/>
+				>
+					<Icon name='image' size={25} style={styles.plusIcon} />
+					<Text style={{color: 'white', fontSize: 16}}>Upload Image</Text>
+				</TouchableOpacity>
 				<View style={styles.textInput}>
 					<TextInput
 						placeholder='Name'
+						selectionColor={globalStyles.primary}
 						fontSize={20}
 						value={plantName}
 						onChangeText={(plantName) => setPlantName(plantName)}
 					/>
 				</View>
-				<View style={styles.selectContainer}>
-					<SelectList
-						data={species}
-						defaultOption={initialSpecies}
-						setSelected={setPlantSpecies}
-						placeholder='Select species'
-					/>
-				</View>
 				<View style={styles.buttonContainer}>
+					<View style={styles.selectContainer}>
+						<SelectList
+							data={species}
+							defaultOption={initialSpecies}
+							setSelected={setPlantSpecies}
+							placeholder='Select species'
+							boxStyles={styles.selectBox}
+							dropdownStyles={[styles.selectBox, styles.selectDrop]}
+						/>
+					</View>
 					<TouchableOpacity onPress={() => {setSensorModal(true)}} style={styles.buttonClickContain}>
-						<View style={styles.button}>
-							<Icon name='tint' size={25} style={styles.icon} />
-							<Text style={styles.buttonText}>Add soil moisture sensor</Text>
+						<View style={styles.addButton}>
+							<Icon name='tint' size={25} style={styles.darkIcon} />
+							<Text style={styles.darkButtonText}>Add soil moisture sensor</Text>
 						</View>
 					</TouchableOpacity>
 
@@ -273,24 +302,24 @@ export default function EditPlant({ navigation }){
 						</View>
 					</Modal>
 
-					{/* <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
-						<View style={styles.button}>
+					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+						<View style={styles.addButton}>
 							<Icon2 name='plus-a' size={15} style={styles.icon} />
-							<Text style={styles.buttonText}>Add irrigator</Text>
-						</View>
-					</TouchableOpacity> */}
-					<TouchableOpacity onPress={deletePlant} style={styles.buttonClickContain}>
-						<View style={[styles.button, styles.deleteButton]}>
-							<Icon name='trash' size={25} style={styles.icon} />
-							<Text style={styles.buttonText}>Delete Plant</Text>
+							<Text style={styles.darkButtonText}>Add irrigator</Text>
 						</View>
 					</TouchableOpacity>
-					<TouchableOpacity onPress={updatePlant} style={styles.buttonClickContain}>
-						<View style={styles.updateButton}>
+					<View style={[styles.buttonClickContain, {marginTop: 10}]}>
+						<TouchableOpacity style={styles.deleteButton} onPress={deletePlant}>
+							<Icon name='trash' size={25} style={styles.icon} />
+							{/* <Text style={styles.buttonText}>Delete Plant</Text> */}
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.updateButton} onPress={updatePlant}>
 							<Icon2 name='check' size={15} style={styles.updateIcon} />
 							<Text style={styles.updateText}>Update Plant</Text>
-						</View>
-					</TouchableOpacity>
+						</TouchableOpacity>
+					</View>
+					{/* <View style={styles.buttonClickContain}>
+					</View> */}
 				</View>
 			</View>
     	</ScrollView>
@@ -306,16 +335,36 @@ const styles = StyleSheet.create({
 	},
 
 	uploadImageButton: {
-		marginTop: 20,
+		marginBottom: 15,
+		paddingVertical: 10,
+		paddingHorizontal: 15,
+		elevation: globalStyles.elevation,
+		backgroundColor: globalStyles.secondary,
+		borderRadius: 4,
+		flexDirection: 'row',
+		alignItems: 'center'
 	},
-
+	plusIcon:{
+		color: 'white',
+		marginRight: 20,
+	},
 	selectContainer: {
 		marginTop: 20,
+		marginBottom: 20,
 		alignSelf: 'center',
-		width: '70%',
+		width: '80%',
 		maxWidth: 600,
 	},
-
+	selectBox:{
+		backgroundColor: 'white',
+		borderColor: 'white',
+		borderWidth: 0,
+		borderRadius: 4,
+		elevation: globalStyles.elevation,
+	},
+	selectDrop:{
+		backgroundColor: globalStyles.background,
+	},
 	selectList: {
 		borderWidth: 3,
 	},
@@ -332,75 +381,97 @@ const styles = StyleSheet.create({
 		borderColor: '#ABB5BE',
 		padding: 16,
 		marginBottom: 8,
-		width: '70%',
+		width: '80%',
 	},
 
 	addImage: {
-		width: 80,
-		height: 80,
+		width: 170,
+		height: 170,
 		marginTop: 20,
-		marginBottom: 20,
+		marginBottom: 10,
 	},
 
 	buttonContainer: {
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: '100%',
-		marginTop: 50,
-	},
-
-	button: {
-		flexDirection: 'row',
-		backgroundColor: '#3a5a40',
-		alignItems: 'center',
-		justifyContent: 'flex-start',
-		borderRadius: 5,
-		width: 300,
-		padding: 12,
-		height: 55,
+		width: width * 1,
 	},
 
 	deleteButton: {
+		flexDirection: 'row',
+		elevation: globalStyles.elevation,
+		paddingVertical: 12,
+		paddingHorizontal: 19,
+		borderRadius: 4,
+		// marginTop: 16,
+		alignSelf: 'flex-start',
+		alignItems: 'center',
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+		borderRadius: 5,
+		height: '100%', 
 		backgroundColor: '#b02121',
+	},
+	addButton:{
+		flexDirection: 'row',
+		elevation: globalStyles.elevation,
+		padding: 12,
+		borderRadius: 4,
+		// marginTop: 0,
+		alignItems: 'center',
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+		borderRadius: 5,
+		width: '100%',
+		height: 55, 
+		backgroundColor: '#fff'
+	},
+	darkIcon: {
+		color: 'black',
+		marginLeft: 10,
+		marginRight: 20,
 	},
 
 	updateButton: {
+		elevation: globalStyles.elevation,
 		flexDirection: 'row',
-		backgroundColor: '#fff',
-		height: 55,
-		shadowColor: "#000",
-		shadowOffset: {
-		  width: 0,
-		  height: 1,
-		},
-		shadowOpacity: 0.23,
-		shadowRadius: 2.62,
-		elevation: 10,
+		backgroundColor: globalStyles.primary,
 		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'space-between',
 		borderRadius: 5,
-		width: 200,
-		padding: 12,
-		marginTop: 35,
-		marginTop: 35,
-		
+		paddingHorizontal: 20,
+		paddingVertical: 15,
+		height: '100%',
 	},
 
 	updateText: {
-		color: 'black',
+		color: 'white',
 		fontSize: 16,
 		fontWeight: 'bold',
 	},
-
+	updateIcon: {
+		color: 'white',
+		marginRight: 20,
+	},
 	buttonClickContain: {
-		marginBottom: 24,
+		width: '80%',
+		marginBottom: 20,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		height: 55,
 	},
 
 	buttonText: {
 		color: 'white',
 		fontSize: 16,
 		fontWeight: 'bold',
+	},
+	darkButtonText: {
+		color: 'black',
+		fontSize: 16,
+		fontWeight: 'regular',
 	},
 
 	doneImage: {
@@ -411,8 +482,8 @@ const styles = StyleSheet.create({
 
 	icon: {
 		color: 'white',
-		marginLeft: 10,
-		marginRight: 30,
+		// marginLeft: 10,
+		// marginRight: 10,
 	},
 	modalContainer: {
 		backgroundColor: 'rgba(256,256,256,0.85)',
@@ -479,9 +550,5 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 16
 	},
-	updateIcon: {
-		color: 'black',
-		marginLeft: 10,
-		marginRight: 30,
-	},
+	
 });

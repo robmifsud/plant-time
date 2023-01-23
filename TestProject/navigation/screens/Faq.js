@@ -33,7 +33,7 @@ export default function Faq({navigation}){
                 renderItem = {({item}) => (<AccordionItem title= {item.title} bodyText = {item.body}/>
                 )}
             />
-            <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, paddingVertical: "3%", marginHorizontal:10, borderRadius: 10, elevation: 10, shadowColor: 'black', marginBottom: "5%"}} onPress={navigator.goBack}>
+            <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, paddingVertical: "3%", marginHorizontal:10, borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', marginBottom: "5%"}} onPress={navigator.goBack}>
                 <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
                     Close
                 </Text>
