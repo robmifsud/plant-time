@@ -67,11 +67,12 @@ export default PlantComponent;
 const styles = StyleSheet.create({
 	iconButton: {
 		padding: 5,
-		borderRadius: 2,
+		borderRadius: 6,
 		backgroundColor: globalStyles.secondary,
 		aspectRatio: 1/1,
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		elevation: globalStyles.elevation,
 	},
 	editButton: {
 		marginRight: 6,
