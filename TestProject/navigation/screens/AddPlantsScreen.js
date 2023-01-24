@@ -16,6 +16,7 @@ import { useState, useEffect, use } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
+import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as globalStyles from '../../styles/globalStyles';
 import * as ImagePicker from 'expo-image-picker';
 import 'firebase/app';
@@ -230,8 +231,12 @@ export default function AddPlantsScreen({ navigation }) {
 					</View>
 					<TouchableOpacity onPress={() => {setSensorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.button}>
-							<Icon name='tint' size={25} style={styles.icon} />
-							<Text style={styles.buttonText}>Add soil moisture sensor</Text>
+							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
+								<Icon name='tint' size={25} style={styles.darkIcon} />
+							</View>
+							<View style={{marginLeft: '5%', width: '80%'}}>
+								<Text style={styles.buttonText}>Add soil moisture sensor</Text>
+							</View>
 						</View>
 					</TouchableOpacity>
 
@@ -264,13 +269,17 @@ export default function AddPlantsScreen({ navigation }) {
 						</View>
 					</Modal>
 
-					{/* <TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 						<View style={styles.button}>
-							<Icon2 name='plus-a' size={15} style={styles.icon} />
-							<Text style={styles.buttonText}>Add irrigator</Text>
+							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
+								<Icon3 name='watering-can' size={25} style={styles.darkIcon} />
+							</View>
+							<View style={{marginLeft: '5%', width: '80%'}}>
+								<Text style={styles.buttonText}>Add irrigator</Text>
+							</View>
 						</View>
-					</TouchableOpacity> */}
-					<View style={styles.buttonClickContain}>
+					</TouchableOpacity>
+					<View style={styles.submitButtonClickContain}>
 						<TouchableOpacity onPress={addPlant} style={styles.submit}>
 							<Icon2 name='check' size={15} style={styles.submitIcon} />
 							<Text style={styles.submitText}>Submit Plant</Text>
@@ -394,7 +403,13 @@ const styles = StyleSheet.create({
 	},
 	buttonClickContain: {
 		width: '80%',
-		marginBottom: 40,
+		// marginBottom: 40,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	submitButtonClickContain: {
+		width: '80%',
+		marginTop: 40,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
@@ -415,6 +430,10 @@ const styles = StyleSheet.create({
 		color: 'black',
 		marginLeft: 10,
 		marginRight: 20,
+	},
+
+	darkIcon: {
+		color: 'black',
 	},
 	spacer: {
 		height:300

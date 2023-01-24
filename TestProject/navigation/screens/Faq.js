@@ -10,18 +10,33 @@ export default function Faq({navigation}){
     const data = [
         {
             id: 0,
-            title: 'How do you add a Plant?',
-            body: "To add a plant simply",
+            title: 'How do you add a plant?',
+            body: "To add a plant, go to the 'Add Plants' page and add an image, name, species and sensor of your new plant. Press the 'Submit Plant' button to create the new Plant. ",
         },
         {
             id: 1,
-            title: 'How do I add a Plant sensor?',
-            body: "To add a plant simply",
+            title: 'How do I edit plant details?',
+            body: "To edit plant details, go to the 'All Plants' page or the 'Home Screen' page. Press the 'pencil' icon for the plant that you want to edit. Edit the plant as needed and press 'Update Plant' button.",
         },
         {
             id: 2,
-            title: 'How do I identify the state of my plant?',
-            body: "To add a plant simply",
+            title: 'How do I view all the plants?',
+            body: "To view all the plants, go to the 'All Plants' page or the 'Home Screen' page and press the 'View All' button. ",
+        },
+        {
+            id: 3,
+            title: 'How do I view the status of a plant?',
+            body: "To view the status of the plant, locate a plant either from the 'Home Screen' page or the 'All Plants' page. Press the 'list' icon for the plant that you want to view. The status of the plant will be displayed.",
+        },
+        {
+            id: 4,
+            title: 'How do I irrigate a plant?',
+            body: "To irrigate a plant, locate a plant and press the 'details' icon. A screen will appear, press the 'irrigate' button to irrigate a plant.",
+        },
+        {
+            id: 5,
+            title: 'How do I log out from the app?',
+            body: "To log out, go to the 'Settings' page and press the 'Log out' button. A screen will appear, press the 'Log out' button to log out.",
         },
     ];
 

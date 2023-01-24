@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
+import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as globalStyles from '../styles/globalStyles';
 import * as ImagePicker from 'expo-image-picker';
 import 'firebase/app';
@@ -268,8 +269,12 @@ export default function EditPlant({ navigation }){
 					</View>
 					<TouchableOpacity onPress={() => {setSensorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.addButton}>
-							<Icon name='tint' size={25} style={styles.darkIcon} />
-							<Text style={styles.darkButtonText}>Add soil moisture sensor</Text>
+							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
+								<Icon name='tint' size={25} style={styles.darkIcon2} />
+							</View>
+							<View style={{marginLeft: '5%', width: '80%'}}>
+								<Text style={styles.darkButtonText}>Add soil moisture sensor</Text>
+							</View>
 						</View>
 					</TouchableOpacity>
 
@@ -304,8 +309,12 @@ export default function EditPlant({ navigation }){
 
 					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
 						<View style={styles.addButton}>
-							<Icon2 name='plus-a' size={15} style={styles.icon} />
-							<Text style={styles.darkButtonText}>Add irrigator</Text>
+							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
+							<Icon3 name='watering-can' size={25} style={styles.darkIcon2} />
+							</View>
+							<View style={{marginLeft: '5%', width: '80%'}}>
+								<Text style={styles.darkButtonText}>Add irrigator</Text>
+							</View>
 						</View>
 					</TouchableOpacity>
 					<View style={[styles.buttonClickContain, {marginTop: 10}]}>
@@ -420,10 +429,7 @@ const styles = StyleSheet.create({
 		elevation: globalStyles.elevation,
 		padding: 12,
 		borderRadius: 4,
-		// marginTop: 0,
 		alignItems: 'center',
-		flexDirection: 'row',
-		justifyContent: 'flex-start',
 		borderRadius: 5,
 		width: '100%',
 		height: 55, 
@@ -434,7 +440,9 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		marginRight: 20,
 	},
-
+	darkIcon2:{
+		color: 'black',
+	},
 	updateButton: {
 		elevation: globalStyles.elevation,
 		flexDirection: 'row',
