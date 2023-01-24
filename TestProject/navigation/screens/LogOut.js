@@ -7,56 +7,71 @@ import * as globalStyles from '../../styles/globalStyles';
 export default function LogOut({navigation}){
     const navigator = useNavigation();
 
-    const logout = async() =>{
+    const logout = async() => {
         await signOut(getAuth()).catch(error => console.log('signOut error: ', error));
     }
 
-    const styles = StyleSheet.create({
-        container : {
-            flex:1, 
-            marginTop: '5%',
-            paddingLeft: "4%", 
-            paddingRight: "4%", 
-            marginBottom: "20%",
-        },
-        title : {
-            fontSize: PixelRatio.getPixelSizeForLayoutSize(8), 
-            borderBottomColor: '#3a5a40', 
-            borderBottomWidth: 1, 
-            paddingBottom: 7, 
-            fontWeight: 'bold', 
-            paddingLeft: "4%", 
-            paddingRight: "4%", 
-            marginBottom: "4%"
-        },
-        // floatingTitle : {
-        //     fontSize: PixelRatio.getPixelSizeForLayoutSize(8), 
-        //     padding: PixelRatio.getPixelSizeForLayoutSize(16),
-        //     borderRadius : PixelRatio.getPixelSizeForLayoutSize(8),
-        //     elevation: 10,
-        // }
-    });
-
     return(
-        <View style={styles.container}>
-            <ScrollView style={{}}>
-                <Text style={styles.title}>
-                    Are your sure you want to Log Out?
-                </Text>
-                <View style={{paddingLeft: "4%", paddingRight: "4%"}}>
-                    <TouchableOpacity style={{alignItems: 'center', backgroundColor:'white', padding: "3%", borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={logout}>
-                    <Text style={{color: 'black', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
+        <ScrollView style={{}}>
+            <View style={styles.container}>
+                <View style={styles.prompt}>
+                    <Text style={styles.title}>
+                        Are your sure you want to Log Out?
+                    </Text>
+                </View>
+                <TouchableOpacity style={styles.logOutButton} onPress={logout}>
+                    <Text style={styles.text}>
                         Log Out
                     </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, padding: "3%", borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', margin:8, marginBottom: "5%"}} onPress={navigator.goBack}>
-                    <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.closeBtn} onPress={navigator.goBack}>
+                    <Text style={[styles.text, {color: 'white'}]}>
                         Close
                     </Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </View>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 }
+
+const styles = StyleSheet.create({
+    container : {
+        flexDirection: 'column',
+        flex:1, 
+        padding: PixelRatio.getPixelSizeForLayoutSize(8),
+    },
+    logOutButton: {
+        width: '100%',
+        alignItems: 'center', 
+        backgroundColor:'white', 
+        padding: "3%", 
+        borderRadius: 4, 
+        elevation: globalStyles.elevation, 
+        shadowColor: 'black', 
+        marginBottom: PixelRatio.getPixelSizeForLayoutSize(6)
+    },
+    closeBtn: {
+        alignItems: 'center',
+        width: '100%',
+        backgroundColor: globalStyles.primary,
+        padding: "3%",
+        borderRadius: 4,
+        elevation: globalStyles.elevation,
+        shadowColor: 'black',
+        marginBottom: PixelRatio.getPixelSizeForLayoutSize(5)
+    },
+    title : {
+        fontSize: PixelRatio.getPixelSizeForLayoutSize(8), 
+        fontWeight: 'bold', 
+    },
+    prompt: {
+        borderRadius: 4,
+        padding: PixelRatio.getPixelSizeForLayoutSize(7),
+        width: '100%',
+        backgroundColor: 'white',
+        marginBottom: PixelRatio.getPixelSizeForLayoutSize(10)
+    },
+    text: {
+        fontSize: PixelRatio.getPixelSizeForLayoutSize(7)
+    },
+});

@@ -11,7 +11,7 @@ function SettingsScreenStack() {
     <Stack.Navigator
         defaultScreenOptions={{headerShown : true}}
     >
-      <Stack.Screen name="Settings Screen" component={SettingsScreen} options={{title : 'Settings Screen', headerTintColor: globalStyles.primary}} />
+      <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{title : 'Settings', headerTintColor: globalStyles.primary}} />
       <Stack.Screen name="LogOut" component={LogOut} options={{title : 'Log Out', headerTintColor: globalStyles.primary}} />
       <Stack.Screen name="Faq" component={Faq} options={{title : 'FAQ', headerTintColor: globalStyles.primary}} />
     </Stack.Navigator>

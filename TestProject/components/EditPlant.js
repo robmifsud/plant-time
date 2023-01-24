@@ -385,10 +385,12 @@ const styles = StyleSheet.create({
 	},
 
 	addImage: {
-		width: 170,
-		height: 170,
 		marginTop: 20,
 		marginBottom: 10,
+		borderRadius: 4,
+		width: 170,
+		height: 170,
+		backgroundColor: 'white',
 	},
 
 	buttonContainer: {
@@ -499,7 +501,7 @@ const styles = StyleSheet.create({
 		width: '80%',
 		// height: '30%',
 		backgroundColor: 'white',
-		borderRadius: 12,
+		borderRadius: 5,
 		shadowColor: "#000",
 		shadowOffset: {
 			width: 0,
@@ -521,7 +523,7 @@ const styles = StyleSheet.create({
 		marginLeft: 6
 	},
 	modalInput:{
-		borderRadius: 6,
+		borderRadius: 4,
 		backgroundColor: 'rgba(58,90,64,0.2)',
 		paddingTop: 2,
 		paddingBottom: 2,
@@ -534,13 +536,13 @@ const styles = StyleSheet.create({
 		marginTop: 'auto'
 	},
 	modalButton:{
-
+		elevation: 2,
 		flex:1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		width:'100%',
 		maxWidth:'45%',
-		borderRadius:8,
+		borderRadius:6,
 		padding:8,
 		fontSize:20,
 		fontWeight:'bold',
@@ -550,5 +552,4 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 16
 	},
-	
 });
