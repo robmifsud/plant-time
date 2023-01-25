@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, Image, LogBox } from 'react-native';
 import MainContainer from './navigation/MainContainer';
 import 'expo-dev-client';
 import { useState, useEffect } from 'react';
@@ -27,6 +27,7 @@ function App(){
   const [user, setUser] = useState();
 
   useEffect(() => {
+
     onAuthStateChanged(getAuth(), (user) => {
       setUser(user);
       if(user){

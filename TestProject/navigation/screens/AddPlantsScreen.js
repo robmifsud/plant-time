@@ -269,7 +269,7 @@ export default function AddPlantsScreen({ navigation }) {
 						</View>
 					</Modal>
 
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					<TouchableOpacity style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
 								<Icon3 name='watering-can' size={25} style={styles.darkIcon} />

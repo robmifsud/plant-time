@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, StyleSheet, FlatList, PixelRatio, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Text, StyleSheet, PixelRatio, TouchableOpacity, ScrollView, View } from 'react-native';
 import {useNavigation} from "@react-navigation/native";
 import * as globalStyles from '../../styles/globalStyles';
 import AccordionItem from '../../components/AccordionItem';
@@ -41,19 +41,18 @@ export default function Faq({navigation}){
     ];
 
     return(
-        <SafeAreaView style={styles.container}>
-            <FlatList
-                data = {data}
-                keyExtractor = {(item) => item.id.toString()}
-                renderItem = {({item}) => (<AccordionItem title= {item.title} bodyText = {item.body}/>
-                )}
-            />
-            <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, paddingVertical: "3%", marginHorizontal:10, borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', marginBottom: "5%"}} onPress={navigator.goBack}>
+        <ScrollView style={styles.container}>
+            {data.map((item) =>(
+                <View key={item.id}>
+                    <AccordionItem title= {item.title} bodyText = {item.body}/>
+                </View>
+            ))}
+            <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, paddingVertical: "3%", marginHorizontal:10, borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', marginBottom: 40}} onPress={navigator.goBack}>
                 <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
                     Close
                 </Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </ScrollView>
     );
 }
 
@@ -61,6 +60,6 @@ const styles = StyleSheet.create({
     container:{
         flexDirection: 'column',
         paddingHorizontal: 10,
-        marginTop: 20,
+        paddingTop: 20,
     }
 });

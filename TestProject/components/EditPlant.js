@@ -307,10 +307,10 @@ export default function EditPlant({ navigation }){
 						</View>
 					</Modal>
 
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					<TouchableOpacity  style={styles.buttonClickContain}>
 						<View style={styles.addButton}>
 							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
-							<Icon3 name='watering-can' size={25} style={styles.darkIcon2} />
+								<Icon3 name='watering-can' size={25} style={styles.darkIcon2} />
 							</View>
 							<View style={{marginLeft: '5%', width: '80%'}}>
 								<Text style={styles.darkButtonText}>Add irrigator</Text>
