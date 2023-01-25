@@ -7,11 +7,13 @@ import * as globalStyles from '../../styles/globalStyles';
 export default function LogOut({navigation}){
     const navigator = useNavigation();
 
+    // Function to handle user log out
     const logout = async() => {
         await signOut(getAuth()).catch(error => console.log('signOut error: ', error));
     }
 
     return(
+        // Prompt user to log out of application
         <ScrollView style={{}}>
             <View style={styles.container}>
                 <View style={styles.prompt}>

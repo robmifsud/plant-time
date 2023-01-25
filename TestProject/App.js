@@ -10,6 +10,7 @@ import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithCredential }
 // global.__DEV__ = false;
 
 function App(){
+  // Initialise Firebase instance
   initializeApp({
     apiKey: "AIzaSyBHdOM8KSVqQpFdVqFDbMXh1O3DF0fwphw",
     authDomain: "planttime-87863.firebaseapp.com",
@@ -20,12 +21,14 @@ function App(){
     measurementId: "G-61NH9WW1E4"
   });
 
+  // Initialise google authentication methods
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     expoClientId: '1059978339008-m5d4l8bv1hlgf3a20auu1i3orrqgpcmo.apps.googleusercontent.com'
   });
 
   const [user, setUser] = useState();
 
+  // Check if user is logged in on render, show login page if not logged in
   useEffect(() => {
 
     onAuthStateChanged(getAuth(), (user) => {

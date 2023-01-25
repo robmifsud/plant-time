@@ -15,20 +15,25 @@ import {
 } from 'react-native-paper';
 
 const { width, height } = Dimensions.get('window');
+
+// Component to show plant cards on home screen and all plants screen
 const PlantComponent = (props) => {
 	const [plant, setPlant] = useState({});
 	const navigation = useNavigation();
 
+	// Populate state on render
 	useEffect(() => {
 		setPlant(props.plant);
 	});
 
+	// Handle navigation to edit page
 	const editPlant = () => {
 		navigation.push('EditPlant', {
 			ogPlant: plant,
 		});
 	};
 
+	// Handle navigation to details page
 	const details = () => {
 		navigation.push('Details', {
 			ogPlant: plant,

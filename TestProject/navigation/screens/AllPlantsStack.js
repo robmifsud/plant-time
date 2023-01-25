@@ -7,6 +7,7 @@ import * as globalStyles from '../../styles/globalStyles';
 const Stack = createStackNavigator();
 
 function AllPlantsStack() {
+  // Stack navigator to handle all actions within the 'All Plants' tab
   return (
     <Stack.Navigator
         defaultScreenOptions={{headerShown : true}}

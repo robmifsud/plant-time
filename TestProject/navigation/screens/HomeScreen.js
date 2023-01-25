@@ -28,6 +28,7 @@ export default function HomeScreen({ navigation }) {
 	const [refreshing, setRefreshing] = useState(false);
 	const navigator = useNavigation();
 
+	// Fetch all plant documents from Firestore on render
 	const fetchData = async () => {
 		const tempArray = [];
 		const db = getFirestore();
@@ -46,6 +47,7 @@ export default function HomeScreen({ navigation }) {
 				statusId: doc.get('statusId'),
 				userId: doc.get('userId'),
 				moistureSensorId : doc.get('moistureSensorId'),
+				irrigatorId: doc.get('irrigatorId'),
 			};
 			tempArray.push(dict);
 		});
@@ -57,6 +59,7 @@ export default function HomeScreen({ navigation }) {
 		fetchData();
 	}, []);
 
+	// Hook to refresh data when tab is focused in the app
 	useEffect(() => {
 		const unsubscribe = navigator.addListener('focus', () => {
 			// Handle callback here
@@ -65,6 +68,7 @@ export default function HomeScreen({ navigation }) {
 		return unsubscribe;
 	}, [navigator]);
 
+	// Function to handle pull down to refresh
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
 		fetchData()
@@ -96,6 +100,7 @@ export default function HomeScreen({ navigation }) {
 					</TouchableOpacity>
 				</View>
 				{plants.map((item) => {
+					// Traverse all plants and send data to plant components
 					return <PlantComponent key={item.id} plant={item} />;
 				})}
 			</View>

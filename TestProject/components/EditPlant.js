@@ -6,7 +6,6 @@ import {
 	TextInput,
 	Image,
 	TouchableOpacity,
-	Button,
 	Alert,
 	ScrollView,
 	Modal,
@@ -32,7 +31,7 @@ import {
 	addDoc
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import {useRoute, useNavigation} from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get('window');
 
@@ -43,6 +42,7 @@ export default function EditPlant({ navigation }){
     
     const { ogPlant } = route.params;
     
+	// Populate states from plant prop containing unaltered values
     const [species, setSpecies] = useState([]);
     const [initialSpecies, setInitialSpecies] = useState({});
 	const [plantName, setPlantName] = useState(ogPlant.plantName);
@@ -52,7 +52,11 @@ export default function EditPlant({ navigation }){
 	const [sensorModal, setSensorModal] = useState(false);
 	const [sensorModelNo, setSensorModelNo] = useState('');
 	const [moistureSensorId, setMoistureSensorId] = useState(ogPlant.moistureSensorId);
+	const [irrigatorModal, setIrrigatorModal] = useState(false);
+	const [irrigatorModelNo, setIrrigatorModelNo] = useState('');
+	const [irrigatorId, setIrrigatorId] = useState(ogPlant.irrigatorId);
 
+	// Get species for select list on render
     useEffect(() => {
 		async function getSpecies() {
 			const db = getFirestore();
@@ -72,8 +76,8 @@ export default function EditPlant({ navigation }){
 		getSpecies();
 	}, []);
 
+	// Adding images from device library
     async function addImage() {
-
 		let result = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
@@ -87,6 +91,7 @@ export default function EditPlant({ navigation }){
 		}
 	}
 
+	// Upload user image to Firebase Storage and store resulting url in plant document
     const uploadImage = async (reference) => {
 		const blob = await new Promise((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
@@ -103,7 +108,6 @@ export default function EditPlant({ navigation }){
 		});
 
 		uploadBytes(ref(getStorage(), reference), blob).then((result) => {
-			// console.log('uploadBytes result: ', result.ref)
 			getDownloadURL(result.ref)
 				.then((url) => {
 					updateDoc(doc(getFirestore(), 'plants', reference), {
@@ -114,7 +118,9 @@ export default function EditPlant({ navigation }){
 		});
 	};
 
+	// Fetch changed values from states and update plant document
     const updatePlant = async () => {
+		// Show alert if requried fields are empty
         if(plantName === '' || plantSpecies === ''){
 			Alert.alert(
 				'Warning',
@@ -124,7 +130,6 @@ export default function EditPlant({ navigation }){
 		} else {
             const db = getFirestore();
 
-            
             const plant = {
                 plantName: plantName,
                 userId: getAuth().currentUser.uid,
@@ -132,8 +137,10 @@ export default function EditPlant({ navigation }){
                 plantImage: plantImage, // to remove?
                 statusId: '/status/2', // default status : good
 				moistureSensorId: moistureSensorId,
+				irrigatorId: irrigatorId,
             };
 
+			// Update plant document
             await setDoc(doc(db, 'plants', ogPlant.id), plant)
             .then(() => {
                 console.log('Plant with id: ', ogPlant.id, ' updated in firestore: ', plant);
@@ -162,6 +169,7 @@ export default function EditPlant({ navigation }){
         }
 	};
 
+	// Function to delete plant from Firstore
 	const deletePlant = async() =>{
 		const db = getFirestore();
 		if (moistureSensorId != ''){
@@ -171,6 +179,15 @@ export default function EditPlant({ navigation }){
 				setMoistureSensorId('');
 			})
 			.catch(error => console.log('Error deleting sensor with id ', moistureSensorId, ' :', error))
+		}
+
+		if (irrigatorId != ''){
+			await deleteDoc(doc(db,'irrigators', irrigatorId))
+			.then(() => {
+				console.log('Deleted irrigator with id: ', irrigatorId);
+				setIrrigatorId('');
+			})
+			.catch(error => console.log('Error deleting sensor with id ', irrigatorId, ' :', error))
 		}
 
 		deleteDoc(doc(db,'plants',ogPlant.id))
@@ -193,8 +210,11 @@ export default function EditPlant({ navigation }){
 		})
 	}
 
+	// Add soil moisture sensor to Firestore
 	const addSensor = async () => {
 		const db = getFirestore();
+
+		// If sensor is not empty, delete and add new one
 		if (moistureSensorId != ''){
 			await deleteDoc(doc(db,'moistureSensors', moistureSensorId))
 			.then(() => {
@@ -229,17 +249,48 @@ export default function EditPlant({ navigation }){
 		})
 	}
 
+	// Add irrigator to Firestore
+	const addIrrigator = async () => {
+		const db = getFirestore();
+		// If irrigator already exists, delete and change
+		if (irrigatorId != ''){
+			await deleteDoc(doc(db,'irrigators', irrigatorId))
+			.then(() => {
+				console.log('Deleted irrigator with id: ', irrigatorId);
+				setIrrigatorId('');
+			})
+			.catch(error => console.log('Error deleting sensor with id ', irrigatorId, ' :', error))
+		}
+		const irrigator = {
+			modelNumber : irrigatorModelNo,
+		}
+		await addDoc(collection(db, 'irrigators'), irrigator)
+		.then((docRef) => {
+			console.log('Irrigator with id: ', docRef.id ,'added to firestore.');
+			setIrrigatorId(docRef.id);
+			setIrrigatorModal(false)
+			Alert.alert(
+				'Success!',
+				'An irrigator has been added successfully.',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+		})
+		.catch(error => {
+			console.log('Error while adding irrigator: ', error);
+			Alert.alert(
+				'Error',
+				'Something went wrong while adding the irrigator, please try again',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+			setIrrigatorModal(false);
+		})
+	}
+
     return (
         <ScrollView>
 			<View style={styles.inputContainer}>
-				{plantImage ? (
-					<Image style={styles.addImage} source={{ uri: plantImage }} />
-				) : (
-					<Image
-						style={styles.addImage}
-						source={require('../assets/images/add-image-icon.png')}
-					/>
-				)}
+				<Image style={styles.addImage} source={{ uri: plantImage }} />
+
 				<TouchableOpacity
 					style={styles.uploadImageButton}
 					onPress={addImage}
@@ -273,7 +324,11 @@ export default function EditPlant({ navigation }){
 								<Icon name='tint' size={25} style={styles.darkIcon2} />
 							</View>
 							<View style={{marginLeft: '5%', width: '80%'}}>
-								<Text style={styles.darkButtonText}>Add soil moisture sensor</Text>
+								{(moistureSensorId == '') ? (
+									<Text style={styles.darkButtonText}>Add soil moisture sensor</Text>
+								) : (
+									<Text style={styles.darkButtonText}>Change soil moisture sensor</Text>
+								)}
 							</View>
 						</View>
 					</TouchableOpacity>
@@ -307,16 +362,50 @@ export default function EditPlant({ navigation }){
 						</View>
 					</Modal>
 
-					<TouchableOpacity  style={styles.buttonClickContain}>
+					<TouchableOpacity onPress={() => {setIrrigatorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.addButton}>
 							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
 								<Icon3 name='watering-can' size={25} style={styles.darkIcon2} />
 							</View>
 							<View style={{marginLeft: '5%', width: '80%'}}>
-								<Text style={styles.darkButtonText}>Add irrigator</Text>
+								{(irrigatorId == '') ? (
+									<Text style={styles.darkButtonText}>Add irrigator</Text>
+								) : (
+									<Text style={styles.darkButtonText}>Change irrigator</Text>
+								)}
 							</View>
 						</View>
 					</TouchableOpacity>
+
+					<Modal
+						animationType="fade"
+						transparent={true}
+						visible={irrigatorModal}
+					>
+						<View style={styles.modalContainer}>
+							<View style={styles.cardContainer}>
+								<Text style={styles.modalTitle}>Add Irrigator</Text>
+								<Text style={styles.modalSubtitle}>Model Number:</Text>
+								<TextInput style={styles.modalInput} selectionColor={globalStyles.primary} selectTextOnFocus={true} value={irrigatorModelNo} onChangeText={(irrigatorModelNo) => setIrrigatorModelNo(irrigatorModelNo)}></TextInput>
+
+								<View style={styles.modalButtonRow}>
+									<TouchableOpacity
+										onPress={() => {setIrrigatorModal(false)}}
+										style={[styles.modalButton, {backgroundColor: '#b02121'}]}
+									>
+										<Text style={styles.modalButtonText}>Cancel</Text>
+									</TouchableOpacity>
+									<TouchableOpacity 
+										style={[styles.modalButton, {backgroundColor : 'rgb(58,90,64)'}]}
+										onPress={addIrrigator}
+									>
+										<Text style={styles.modalButtonText}>Add</Text>
+									</TouchableOpacity> 
+								</View>
+							</View>
+						</View>
+					</Modal>
+
 					<View style={[styles.buttonClickContain, {marginTop: 10}]}>
 						<TouchableOpacity style={styles.deleteButton} onPress={deletePlant}>
 							<Icon name='trash' size={25} style={styles.icon} />

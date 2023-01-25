@@ -51,7 +51,6 @@ export default function MainContainer() {
 						return <Icon name={iconName} size={30} color={focused ? globalStyles.primary: globalStyles.secondary}/>;
 					},
 					tabBarStyle: { height: Platform.select({ios:85, android:65}), paddingTop: Platform.select({ios: 5, android: 7.5})},
-					// tabBarActiveTintColor: '#80b742',
 					tabBarActiveTintColor: globalStyles.primary,
 					tabBarInactiveTintColor: globalStyles.secondary,
 					headerTintColor : globalStyles.primary,
