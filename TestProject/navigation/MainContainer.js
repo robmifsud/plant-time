@@ -63,7 +63,7 @@ export default function MainContainer() {
 
 			>
 				{/* the icons and names at the bottom & top */}
-				<Tab.Screen name={homeName} component={HomeScreenStack} options={{headerShown : false, title:'Home Screen'}}/>
+				<Tab.Screen name={homeName} component={HomeScreenStack} options={{headerShown : false, title:'Home'}}/>
 				<Tab.Screen name={addplantsName} component={AddPlantsScreen} />
 				<Tab.Screen name={allplantsName} component={AllPlantsStack} options={{headerShown : false, title:'All Plants'}}/>
 				<Tab.Screen name={settingsName} component={SettingsScreenStack} options={{headerShown : false, title:'Settings'}}/>

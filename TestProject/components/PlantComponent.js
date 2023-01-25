@@ -24,14 +24,20 @@ const PlantComponent = (props) => {
 	});
 
 	const editPlant = () => {
-		navigation.push('Edit Plant', {
+		navigation.push('EditPlant', {
+			ogPlant: plant,
+		});
+	};
+
+	const details = () => {
+		navigation.push('Details', {
 			ogPlant: plant,
 		});
 	};
 
 	return (
 		<View style={styles.cardContainer}>
-			<Card style={styles.mainContent}>
+			<Card style={styles.mainContent} onPress={details}>
 				<Card.Cover source={{ uri: plant.plantImage }} style={styles.cardCover}/>
 				<View style={styles.subContent}>
 					<View style={styles.textBox}>
@@ -52,6 +58,7 @@ const PlantComponent = (props) => {
 						<TouchableOpacity
 							style={[styles.detailsButton, styles.iconButton]}
 							android_ripple={{ borderless: true, radius: 20 }}
+							onPress={details}
 						>
 							<Icon name='list' color='white' size={25.5} />
 						</TouchableOpacity>
@@ -95,6 +102,8 @@ const styles = StyleSheet.create({
 		},
 		shadowOpacity: 0.23,
 		shadowRadius: 2.62,
+		// borderWidth: 1,
+		// borderColor: 'red',
 	},
 
 	subContent: {
@@ -123,7 +132,7 @@ const styles = StyleSheet.create({
 	},
 
 	cardCover: {
-		backgroundColor: 'white',
+		backgroundColor: 'transparent',
 		elevation: 6
 	}
 });

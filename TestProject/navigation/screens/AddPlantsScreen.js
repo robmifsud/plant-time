@@ -138,7 +138,7 @@ export default function AddPlantsScreen({ navigation }) {
 					[{ text: 'Ok', style: 'cancel' }]
 				);
 
-				navigator.navigate('AllPlants');
+				navigator.navigate('AllPlantsStack');
 
 			})
 			.catch((error) => {
@@ -192,14 +192,16 @@ export default function AddPlantsScreen({ navigation }) {
 		<ScrollView>
 			<View style={styles.inputContainer}>
 				
-				{plantImage ? (
-					<Image style={styles.addImage} source={{ uri: plantImage }} />
-				) : (
-					<Image
-						style={styles.addImage}
-						source={require('../../assets/images/add-image-icon.png')}
-					/>
-				)}
+				{/* <View style={styles.imgContainer}> */}
+					{plantImage ? (
+						<Image style={styles.addImage} source={{ uri: plantImage }} />
+					) : (
+						<Image
+							style={styles.addImage}
+							source={require('../../assets/images/add-image-icon.png')}
+						/>
+					)}
+				{/* </View> */}
 				<TouchableOpacity
 					style={styles.uploadImageButton}
 					onPress={addImage}
@@ -267,7 +269,7 @@ export default function AddPlantsScreen({ navigation }) {
 						</View>
 					</Modal>
 
-					<TouchableOpacity onPress={''} style={styles.buttonClickContain}>
+					<TouchableOpacity style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
 								<Icon3 name='watering-can' size={25} style={styles.darkIcon} />
@@ -337,21 +339,23 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 		width: '80%',
 	},
-
+	imgContainer: {
+		backgroundColor: 'white',
+	},
 	addImage: {
-		width: 170,
-		height: 170,
 		marginTop: 20,
 		marginBottom: 10,
+		borderRadius: 4,
+		width: 170,
+		height: 170,
+		backgroundColor: 'white',
 	},
-
 	buttonContainer: {
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: width * 1,
 	},
-
 	button: {
 		flexDirection: 'row',
 		elevation: globalStyles.elevation,
@@ -499,5 +503,4 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		fontSize: 16
 	}
-
 });
