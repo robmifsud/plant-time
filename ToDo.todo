@@ -1,15 +1,29 @@
 General Functionality:
-    ☐ Add irrigator
     ☐ Details page
-    ☐ Add more species with soil values
+    ☐ Add irrigator
     ☐ Subsystem to change moisture values
+    ☐ Figure out notifications
+    ☐ Add more species with soil values
+    ☐ Remove ugly yellow banners (debugging)
+    ☐ Fix landing page vertical margins
     ☐ Comments
+
+Details page:
+    ✔ Photo @done (1/24/2023, 11:53:35 PM)
+    ✔ Name @done (1/24/2023, 11:53:38 PM)
+    ✔ Species @done (1/24/2023, 11:53:39 PM)
+    ✔ Current moisture level @done (1/24/2023, 11:53:40 PM)
+    ☐ Not auto: irrigate manually in increments
+    ☐ Toggle auto: maitain moisture automatically
+
+General UI:
+    ☐ Change styling when screens are empty.
 
 Home Screen:
     ☐ Notifications
 
 Log Out:
-    ☐ Make sub title better looking
+    ✔ Make sub title better looking @done (1/24/2023, 4:33:28 PM)
 
 Edit plant:
     ✔ Redirect after successful update? @done (1/22/2023, 10:38:10 PM)
@@ -18,11 +32,3 @@ Edit plant:
 Soil Moisture:
     ✔ Change modal styling @done (1/22/2023, 10:17:51 PM)
     ✔ Delete sensor when deleting plant @done (1/23/2023, 3:09:22 AM)
-
-Details page:
-    ☐ Photo
-    ☐ Name
-    ☐ Species
-    ☐ Current moisture level
-    ☐ Toggle auto: maitain moisture automatically
-    ☐ Not auto: irrigate manually in increments
