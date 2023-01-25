@@ -1,19 +1,22 @@
 General Functionality:
     ☐ Details page
-    ☐ Add irrigator
-    ☐ Subsystem to change moisture values
+    ✔ Add irrigator @done (1/25/2023, 3:33:31 AM)
+    ☐ Subsystem to decrease moisture values over time
     ☐ Figure out notifications
+    ☐ Comments
+    ✔ Change sensor/irrigator text if already present @done (1/25/2023, 3:52:41 AM)
     ☐ Add more species with soil values
     ☐ Remove ugly yellow banners (debugging)
     ☐ Fix landing page vertical margins
-    ☐ Comments
+    ☐ Add Conrad to repo (or public?)
 
 Details page:
     ✔ Photo @done (1/24/2023, 11:53:35 PM)
     ✔ Name @done (1/24/2023, 11:53:38 PM)
     ✔ Species @done (1/24/2023, 11:53:39 PM)
     ✔ Current moisture level @done (1/24/2023, 11:53:40 PM)
-    ☐ Not auto: irrigate manually in increments
+    ✔ Don't show bar if no sensor @done (1/25/2023, 4:05:41 AM)
+    ✔ Not auto: irrigate manually in increments @done (1/25/2023, 11:24:50 AM)
     ☐ Toggle auto: maitain moisture automatically
 
 General UI:

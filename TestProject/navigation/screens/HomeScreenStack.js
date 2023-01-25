@@ -7,6 +7,7 @@ import * as globalStyles from '../../styles/globalStyles'
 const Stack = createStackNavigator();
 
 function HomeScreenStack() {
+  // Stack navigator to handle all actions within the 'Home' tab
   return (
     <Stack.Navigator
         defaultScreenOptions={{headerShown : true}}

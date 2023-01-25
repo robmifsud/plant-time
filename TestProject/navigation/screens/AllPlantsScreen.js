@@ -24,15 +24,15 @@ export default function AllPlantsScreen({ navigation }) {
 	const [refreshing, setRefreshing] = useState(false);
 	const navigator = useNavigation();
 
+	// Fetch all plant documents from Firestore on render
 	const fetchData = async () => {
 		// Fetching data from firestore must be in async function as useEffect method expects synchronous code
 		const tempArray = [];
 		const db = getFirestore();
 		const querySnapshot = await getDocs(query(collection(db, 'plants'), where('userId', '==', getAuth().currentUser.uid)));
 		querySnapshot.forEach(doc => {
+			// Load data into object for easier access later on
 			const dict = {
-				// id : doc.ref.path,
-				// ref: doc.ref,
 				id : doc.id,
 				plantName : doc.get('plantName'),
 				plantImage : doc.get('plantImage'),
@@ -40,6 +40,7 @@ export default function AllPlantsScreen({ navigation }) {
 				statusId : doc.get('statusId'),
 				userId : doc.get('userId'),
 				moistureSensorId : doc.get('moistureSensorId'),
+				irrigatorId: doc.get('irrigatorId'),
 			}
 			tempArray.push(dict)
 		})
@@ -51,6 +52,7 @@ export default function AllPlantsScreen({ navigation }) {
 		fetchData();
 	}, [])
 
+	// Hook to refresh data when tab is focused in the app
 	useEffect(() => {
 		const unsubscribe = navigator.addListener('focus', () => {
 			// Handle callback here
@@ -59,6 +61,7 @@ export default function AllPlantsScreen({ navigation }) {
 		return unsubscribe;
 	}, [navigator])
 
+	// Function ot handle pull down to refresh
 	const onRefresh = useCallback(() => {
 		setRefreshing(true);
 		fetchData()
@@ -77,6 +80,7 @@ export default function AllPlantsScreen({ navigation }) {
 			}
 		>
 			{plantsRef.map((item) => {
+				// Traverse all plants and send data to plant components
 				return <PlantComponent key={item.id} plant={item} />;
 			})}
 		</ScrollView>

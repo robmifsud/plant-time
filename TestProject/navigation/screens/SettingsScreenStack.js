@@ -7,6 +7,7 @@ import * as globalStyles from '../../styles/globalStyles';
 const Stack = createStackNavigator();
 
 function SettingsScreenStack() {
+  // Stack navigator to handle all actions within the 'Settings' tab
   return (
     <Stack.Navigator
         defaultScreenOptions={{headerShown : true}}

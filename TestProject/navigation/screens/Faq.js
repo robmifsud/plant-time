@@ -5,6 +5,7 @@ import * as globalStyles from '../../styles/globalStyles';
 import AccordionItem from '../../components/AccordionItem';
 
 export default function Faq({navigation}){
+    // Fetches FAQ data and relays to relevant components
     const navigator = useNavigation();
 
     const data = [
@@ -47,7 +48,7 @@ export default function Faq({navigation}){
                     <AccordionItem title= {item.title} bodyText = {item.body}/>
                 </View>
             ))}
-            <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, paddingVertical: "3%", marginHorizontal:10, borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', marginBottom: 40}} onPress={navigator.goBack}>
+            <TouchableOpacity style={{alignItems: 'center', backgroundColor: globalStyles.primary, paddingVertical: "3%", marginHorizontal:10, borderRadius: 4, elevation: globalStyles.elevation, shadowColor: 'black', marginBottom: 40, marginTop:10}} onPress={navigator.goBack}>
                 <Text style={{color: 'white', fontSize: PixelRatio.getPixelSizeForLayoutSize(7)}}>
                     Close
                 </Text>

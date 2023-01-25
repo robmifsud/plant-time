@@ -10,9 +10,11 @@ import {useRoute, useNavigation} from "@react-navigation/native";
 export default function SettingsScreen({navigation}){
     const navigator = useNavigation();
 
+    // Handle navigation to log out component
     const logout = async() => {
         navigator.push('LogOut')
     }
+    // Handle navigation to FAQ component
     const faq = async() => {
         navigator.push('Faq')
     }
