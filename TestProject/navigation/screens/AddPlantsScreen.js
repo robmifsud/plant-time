@@ -37,18 +37,23 @@ import { useNavigation } from "@react-navigation/native";
 const { width, height } = Dimensions.get('window');
 
 export default function AddPlantsScreen({ navigation }) {
+	// All states necessary to save a plant to Firestore
 	const [species, setSpecies] = useState([]);
 	const [plantName, setPlantName] = useState('');
 	const sampleUri = Image.resolveAssetSource(sampleImage).uri;
 	const [plantImage, setPlantImage] = useState(sampleUri);
 	const [plantSpecies, setPlantSpecies] = useState('');
 	const [sensorModal, setSensorModal] = useState(false);
+	const [irrigatorModal, setIrrigatorModal] = useState(false);
 	const [sensorModelNo, setSensorModelNo] = useState('');
+	const [irrigatorModelNo, setIrrigatorModelNo] = useState('');
 	const [moistureSensorId, setMoistureSensorId] = useState('');
+	const [irrigatorId, setIrrigatorId] = useState('');
 	// TO DO: state to hanle no sensor selected?
 
 	const navigator = useNavigation();
 
+	// Get species list on render
 	useEffect(() => {
 		async function getSpecies() {
 			const db = getFirestore();
@@ -61,6 +66,7 @@ export default function AddPlantsScreen({ navigation }) {
 		getSpecies();
 	}, []);
 
+	// Function to add image from phone image library
 	async function addImage() {
 
 		let result = await ImagePicker.launchImageLibraryAsync({
@@ -75,6 +81,7 @@ export default function AddPlantsScreen({ navigation }) {
 		}
 	}
 
+	// Upload image to Firebase storage and save url to plant document
 	const uploadImage = async (reference) => {
 		const blob = await new Promise((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
@@ -101,7 +108,9 @@ export default function AddPlantsScreen({ navigation }) {
 		});
 	};
 
+	// Add new plant to Firestore using user input data from states
 	const addPlant = async () => {
+		// Throw error if requried fields are empty
 		if(plantName === '' || plantSpecies === ''){
 			console.log('Name: ', plantName, "  ", 'Species: ', plantSpecies)
 			Alert.alert(
@@ -115,9 +124,10 @@ export default function AddPlantsScreen({ navigation }) {
 				plantName: plantName,
 				userId: getAuth().currentUser.uid,
 				speciesId: plantSpecies,
-				plantImage: plantImage, // to remove?
+				plantImage: plantImage,
 				statusId: '/status/2', // default status : good
 				moistureSensorId: moistureSensorId,
+				irrigatorId: irrigatorId
 			};
 
 			await addDoc(collection(getFirestore(), 'plants'), plant)
@@ -131,6 +141,8 @@ export default function AddPlantsScreen({ navigation }) {
 				setPlantImage(sampleUri);
 				setMoistureSensorId('');
 				setSensorModelNo('');
+				setIrrigatorId('');
+				setIrrigatorModelNo('');
 
 				Alert.alert(
 					'Success',
@@ -138,7 +150,7 @@ export default function AddPlantsScreen({ navigation }) {
 					[{ text: 'Ok', style: 'cancel' }]
 				);
 
-				navigator.navigate('AllPlantsStack');
+				navigator.navigate('AllPlants');
 
 			})
 			.catch((error) => {
@@ -152,8 +164,10 @@ export default function AddPlantsScreen({ navigation }) {
 		}
 	};
 
+	// Add sensor document to Firestore
 	const addSensor = async () => {
 		const db = getFirestore();
+		// If sensore already exists, delete and add new one
 		if (moistureSensorId != ''){
 			await deleteDoc(doc(db,'moistureSensors', moistureSensorId))
 			.then(() => {
@@ -188,20 +202,47 @@ export default function AddPlantsScreen({ navigation }) {
 		})
 	}
 
+	// Add irrigator document to Firestore
+	const addIrrigator = async () => {
+		const db = getFirestore();
+		// If irrigator already exists, delete and add new one
+		if (irrigatorId != ''){
+			await deleteDoc(doc(db,'irrigators', irrigatorId))
+			.then(() => {
+				console.log('Deleted irrigator with id: ', irrigatorId);
+				setIrrigatorId('');
+			})
+			.catch(error => console.log('Error deleting sensor with id ', irrigatorId, ' :', error))
+		}
+		const irrigator = {
+			modelNumber : irrigatorModelNo,
+		}
+		await addDoc(collection(db, 'irrigators'), irrigator)
+		.then((docRef) => {
+			console.log('Irrigator with id: ', docRef.id ,'added to firestore.');
+			setIrrigatorId(docRef.id);
+			setIrrigatorModal(false)
+			Alert.alert(
+				'Success!',
+				'An irrigator has been added successfully.',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+		})
+		.catch(error => {
+			console.log('Error while adding irrigator: ', error);
+			Alert.alert(
+				'Error',
+				'Something went wrong while adding the irrigator, please try again',
+				[{ text: 'Ok', style: 'cancel' }]
+			);
+			setIrrigatorModal(false);
+		})
+	}
+
 	return (
 		<ScrollView>
 			<View style={styles.inputContainer}>
-				
-				{/* <View style={styles.imgContainer}> */}
-					{plantImage ? (
-						<Image style={styles.addImage} source={{ uri: plantImage }} />
-					) : (
-						<Image
-							style={styles.addImage}
-							source={require('../../assets/images/add-image-icon.png')}
-						/>
-					)}
-				{/* </View> */}
+				<Image style={styles.addImage} source={{ uri: plantImage }} />
 				<TouchableOpacity
 					style={styles.uploadImageButton}
 					onPress={addImage}
@@ -235,7 +276,11 @@ export default function AddPlantsScreen({ navigation }) {
 								<Icon name='tint' size={25} style={styles.darkIcon} />
 							</View>
 							<View style={{marginLeft: '5%', width: '80%'}}>
-								<Text style={styles.buttonText}>Add soil moisture sensor</Text>
+								{(moistureSensorId == '') ? (
+									<Text style={styles.buttonText}>Add soil moisture sensor</Text>
+								) : (
+									<Text style={styles.buttonText}>Change soil moisture sensor</Text>
+								)}
 							</View>
 						</View>
 					</TouchableOpacity>
@@ -269,16 +314,50 @@ export default function AddPlantsScreen({ navigation }) {
 						</View>
 					</Modal>
 
-					<TouchableOpacity style={styles.buttonClickContain}>
+					<TouchableOpacity onPress={() => {setIrrigatorModal(true)}} style={styles.buttonClickContain}>
 						<View style={styles.button}>
 							<View style={{marginLeft: '2%', width: '10%', alignItems: 'center'}}>
 								<Icon3 name='watering-can' size={25} style={styles.darkIcon} />
 							</View>
 							<View style={{marginLeft: '5%', width: '80%'}}>
-								<Text style={styles.buttonText}>Add irrigator</Text>
+								{(irrigatorId == '') ? (
+									<Text style={styles.buttonText}>Add irrigator</Text>
+								) : (
+									<Text style={styles.buttonText}>Change irrigator</Text>
+								)}
 							</View>
 						</View>
 					</TouchableOpacity>
+
+					<Modal
+						animationType="fade"
+						transparent={true}
+						visible={irrigatorModal}
+					>
+						<View style={styles.modalContainer}>
+							<View style={styles.cardContainer}>
+								<Text style={styles.modalTitle}>Add Irrigator</Text>
+								<Text style={styles.modalSubtitle}>Model Number:</Text>
+								<TextInput style={styles.modalInput} selectionColor={globalStyles.primary} selectTextOnFocus={true} value={irrigatorModelNo} onChangeText={(irrigatorModelNo) => setIrrigatorModelNo(irrigatorModelNo)}></TextInput>
+
+								<View style={styles.modalButtonRow}>
+									<TouchableOpacity
+										onPress={() => {setIrrigatorModal(false)}}
+										style={[styles.modalButton, {backgroundColor: '#b02121'}]}
+									>
+										<Text style={styles.modalButtonText}>Cancel</Text>
+									</TouchableOpacity>
+									<TouchableOpacity 
+										style={[styles.modalButton, {backgroundColor : 'rgb(58,90,64)'}]}
+										onPress={addIrrigator}
+									>
+										<Text style={styles.modalButtonText}>Add</Text>
+									</TouchableOpacity> 
+								</View>
+							</View>
+						</View>
+					</Modal>
+
 					<View style={styles.submitButtonClickContain}>
 						<TouchableOpacity onPress={addPlant} style={styles.submit}>
 							<Icon2 name='check' size={15} style={styles.submitIcon} />

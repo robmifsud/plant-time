@@ -4,9 +4,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import * as globalStyles from '../styles/globalStyles';
 
 const AccordionItem = ({title, bodyText}) => {
+    // Custom component used to display the expanding instructions in the FAQ page
     const[showContent, setShowContent] = React.useState(false);
 
     let iconName;
+
     if(showContent==false){
         iconName = 'chevron-down-circle-outline'
     }else if(showContent==true){
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
         borderRadius: 4, 
         elevation: globalStyles.elevation, 
         marginTop:5,
-        marginBottom: 15, 
+        marginBottom: 8, 
         overflow: 'hidden',
         marginHorizontal: 10,
     },

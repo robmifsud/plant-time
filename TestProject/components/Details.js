@@ -3,98 +3,167 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	TextInput,
 	Image,
 	TouchableOpacity,
-	Button,
-	Alert,
 	ScrollView,
-	Modal,
 	Dimensions,
 	PixelRatio,
+	RefreshControl
 } from 'react-native';
-import { useState, useEffect } from 'react';
-import { SelectList } from 'react-native-dropdown-select-list';
-// import LinearGradient from 'react-native-linear-gradient';
-// import Gauge from "react-native-gauge";
+import { useState, useEffect, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import * as globalStyles from '../styles/globalStyles';
-import * as ImagePicker from 'expo-image-picker';
 import 'firebase/app';
-import { getAuth } from 'firebase/auth';
 import {
 	getFirestore,
-	getDocs,
-	collection,
-    setDoc,
 	updateDoc,
 	doc,
-	deleteDoc,
-	addDoc,
 	getDoc
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {useRoute, useNavigation} from "@react-navigation/native";
-// import { LinearGradient } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
 export default function Details({ navigation }){
-    const [species, setSpecies] = useState([]);
-    const route = useRoute();
+	// Component used to display all plant details in a single page
+
+	const [species, setSpecies] = useState([]);
+	const [barPercentage, setBarPercentage] = useState(0);
+	const [idealMoisture, setIdealMoisture] = useState(0);
+	const [moistureLevel, setMoistureLevel] = useState(0);
+	const [refreshing, setRefreshing] = useState();
+	const route = useRoute();
 	const navigator = useNavigation();
     
     const { ogPlant } = route.params;
-
-	const testLev = 40;
-
-    useEffect(() => {
-		// console.log();
-		async function fetchData(){
-			const db = getFirestore()
-			getDoc(doc(db, ogPlant.speciesId))
-			.then((docSnaphot)=>{
-				setSpecies(docSnaphot.get('speciesName'))
-			})
-		}
-
+	
+	useEffect(() => {
+		// Fetch data on render
 		fetchData();
 	}, []);
 
+	// Fetch species name and moisture level using the speciesId from plant document
+	async function fetchData(){
+		const db = getFirestore()
+		await getDoc(doc(db, ogPlant.speciesId))
+		.then((docSnaphot) =>{
+			setSpecies(docSnaphot.get('speciesName'))
+			setIdealMoisture(docSnaphot.get('idealMoisture'))
+			// Only pass concurrent values to avoid issues with states not being updated while rendering
+			getMoisture(docSnaphot.get('idealMoisture'))
+		})
+	}
+
+	// Get current plant moisture level using moistureSensorId from plant document
+	async function getMoisture(idealMoisture){
+		if(ogPlant.moistureSensorId != ''){
+			const db = getFirestore()
+			await getDoc(doc(db,'moistureSensors', ogPlant.moistureSensorId))
+			.then((docSnaphot) => {
+				const current = docSnaphot.get('moistureLevel');
+				return current;
+			}).then((current) => {
+				setMoistureLevel(current);
+				const temp = 50 + (current - idealMoisture);
+				
+				// Set bar percentage to show moisture status for the sliding bar in the UI
+				if(temp<0){
+					setBarPercentage(0)	
+				} else if(temp>100){
+					setBarPercentage(100)
+				} else {
+					setBarPercentage(temp)
+				}
+			})
+		}
+	}
+
+	// Function to handle irrigation
+	// We increment moisture by 5% to simulate real world use
+	async function waterPlant(){
+		const newLevel = moistureLevel + 5;
+		const db = getFirestore()
+		updateDoc(doc(db,'moistureSensors',ogPlant.moistureSensorId),{
+			moistureLevel: newLevel
+		})
+		getMoisture(idealMoisture);
+	}
+
+	// Function to handle pull down to refresh
+	const onRefresh = useCallback(() => {
+		setRefreshing(true);
+		fetchData()
+			.then(() => setRefreshing(false))
+			.catch((error) => {
+				console.log('Refresh error: ', error);
+				setRefreshing(false);
+			});
+	}, []);
+
     return (
-        <ScrollView>
+        <ScrollView refreshControl={
+			<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+		}>
 			<View style={styles.container}>
 				<View style={styles.section}>
 					<Image style={styles.image} source={{ uri: ogPlant.plantImage }} />
 					<Text style={styles.subTitle}>{ogPlant.plantName}</Text>
 					<Text style={styles.species}>Species:  {species}</Text>
 				</View>
-				<View style={styles.section}>
-					<Text style={styles.subTitle}>
-						Moisture Level:
-					</Text>
-					<LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#416f3e', '#46cf34', '#2dc5ff', '#2740f9', '#5007cf']} style={styles.bar}>
-						<View style={styles.needle}></View>
-					</LinearGradient>
-					<View style={styles.ticksRow}>
-						<View style={styles.tick}> 
-							{/* <Text style={styles.tickText}>Moisture</Text> */}
-							<Text style={styles.tickText}>Low</Text>
+
+				{(ogPlant.moistureSensorId != '') ? (
+					<View style={styles.section}>
+						<View style={styles.row}>
+							<Text style={styles.subTitle}>
+								Moisture Level:
+							</Text>
+							{(barPercentage < 25) ? (
+								// Warning labels for different moisture status
+								<View style={styles.lowWarn}>
+									<Icon name='warning' size={13} style={styles.warnIcon}/>
+									<Text style={styles.warnText}>Moisture low</Text>
+								</View>
+							) : (barPercentage>75) ? (
+								<View style={styles.lowWarn}>
+									<Icon name='warning' size={13} style={styles.warnIcon}/>
+									<Text style={styles.warnText}>Moisture high</Text>
+								</View>
+							) : (
+								<Text></Text>
+							)}
 						</View>
-						<View style={styles.tick}>
-							<Text style={styles.tickText}>Optimal</Text>
-						</View>
-						<View style={styles.tick}> 
-							{/* <Text style={styles.tickText}>Moisture</Text> */}
-							<Text style={styles.tickText}>High</Text>
+						<LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#416f3e', '#46cf34', '#2dc5ff', '#2740f9', '#5007cf']} style={styles.bar}>
+							{(barPercentage != '') ? (
+								<View style={[styles.needle, {marginLeft: `${barPercentage}%`}]}></View>
+							) : ( 
+								<View></View>
+							)}
+						</LinearGradient>
+						<View style={styles.ticksRow}>
+							<View style={styles.tick}> 
+								<Text style={styles.tickText}>Low</Text>
+							</View>
+							<View style={styles.tick}>
+								<Text style={styles.tickText}>Optimal</Text>
+							</View>
+							<View style={styles.tick}> 
+								<Text style={styles.tickText}>High</Text>
+							</View>
 						</View>
 					</View>
-				</View>
-				{true ? (
+				) : (
 					<View style={styles.section}>
-						<TouchableOpacity style={styles.waterBtn}>
+						<Text style={styles.notFound}>
+							A soil moisture sensor has not yet been assigned to this plant.
+						</Text>
+					</View>
+				)}
+
+				{(ogPlant.irrigatorId != '') ? (
+					<View style={styles.section}>
+						<TouchableOpacity onPress={waterPlant} style={styles.waterBtn}>
 							<Icon2 name='blood-drop' size={25} style={styles.dropIcon}/>
 							<Text style={{color: 'white', fontSize:20}}>
 								Water plant
@@ -103,11 +172,12 @@ export default function Details({ navigation }){
 					</View>
 				): (
 					<View style={styles.section}>
-						<Text style={styles.noIrrig}>
+						<Text style={styles.notFound}>
 							An irrigator has not yet been assigned to this plant.
 						</Text>
 					</View>
 				)}
+
 			</View>
 		</ScrollView>
     );
@@ -132,7 +202,7 @@ const styles = StyleSheet.create({
 	subTitle:{
 		fontSize:20,
 		fontWeight: 'bold',
-		alignSelf: 'flex-start',
+		marginRight: 'auto',
 	},
 	species:{
 		alignSelf: 'flex-start',
@@ -149,6 +219,30 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginBottom: 10,
 	},
+	row:{
+		flexDirection:'row',
+		width: '100%',
+		alignItems:'center',
+	},
+	lowWarn:{
+		paddingVertical: 4,
+		paddingHorizontal: 8,
+		borderRadius: 4,
+		backgroundColor: 'rgba(236, 37, 37, 0.9)',
+		borderColor: 'rgba(236, 37, 37, 1)',
+		color: 'rgba(236, 37, 37, 1)',
+		justifyContent: 'center',
+		alignItems: 'center',
+		flexDirection: 'row',
+	},
+	warnText:{
+		color: 'white',
+		fontWeight: 'bold'
+	},
+	warnIcon:{
+		color: 'white',
+		marginRight:5,
+	},
 	bar:{
 		width:'90%',
 		paddingHorizontal:'4%',
@@ -164,7 +258,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		width: 7,
 		height: 50,
-		marginLeft: '50%',
+		
 		borderRadius: 10,
 		borderWidth: 1.5,
 		borderColor: globalStyles.background,
@@ -210,9 +304,10 @@ const styles = StyleSheet.create({
 		fontSize:14,
 		fontWeight: 'bold'
 	},
-	noIrrig:{
+	notFound:{
 		opacity:0.4,
 		fontSize: 16,
+		width: '100%',
 	},
 	waterBtn:{
 		width: '100%',
