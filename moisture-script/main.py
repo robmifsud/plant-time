@@ -6,7 +6,7 @@ import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 import time
-cred = credentials.Certificate("planttime-87863-def85b1e974e.json")
+cred = credentials.Certificate("planttime.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
