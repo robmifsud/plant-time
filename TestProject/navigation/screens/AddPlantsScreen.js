@@ -150,7 +150,7 @@ export default function AddPlantsScreen({ navigation }) {
 					[{ text: 'Ok', style: 'cancel' }]
 				);
 
-				navigator.navigate('AllPlants');
+				navigator.navigate('AllPlantsStack');
 
 			})
 			.catch((error) => {

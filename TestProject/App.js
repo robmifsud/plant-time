@@ -10,6 +10,9 @@ import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithCredential }
 // global.__DEV__ = false;
 
 function App(){
+  // console. disableYellowBox = true
+  LogBox.ignoreAllLogs()
+
   // Initialise Firebase instance
   initializeApp({
     apiKey: "AIzaSyBHdOM8KSVqQpFdVqFDbMXh1O3DF0fwphw",

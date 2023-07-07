@@ -6,7 +6,10 @@ import firebase_admin
 from firebase_admin import firestore
 from firebase_admin import credentials
 import time
-cred = credentials.Certificate("planttime.json")
+# Separate script with credential reference
+import config as conf
+
+cred = credentials.Certificate(conf.CRED)
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
@@ -27,6 +30,10 @@ while loop:
 
         temp = moistureLevel['moistureLevel']
         temp -= 5
+        if temp < 0:
+            temp = 0
+        if temp > 100:
+            temp = 100
         data = {
             'moistureLevel': temp
         }

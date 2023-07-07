@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
 	},
 
 	cardCover: {
-		backgroundColor: 'transparent',
+		backgroundColor: 'white',
 		elevation: 6
 	}
 });

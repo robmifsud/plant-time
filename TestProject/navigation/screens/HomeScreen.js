@@ -7,7 +7,7 @@ import {
 	RefreshControl,
 	Dimensions,
 } from 'react-native';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import * as globalStyles from '../../styles/globalStyles'
 import {
 	getFirestore,
@@ -15,6 +15,9 @@ import {
 	collection,
 	where,
 	query,
+	onSnapshot,
+	doc,
+	getDoc
 } from 'firebase/firestore';
 import PlantComponent from '../../components/PlantComponent';
 import { getAuth } from 'firebase/auth';
@@ -24,70 +27,155 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }) {
-	const [plants, setPlants] = useState([]);
 	const [refreshing, setRefreshing] = useState(false);
 	const navigator = useNavigation();
+	const [plants, setPlants] = useState([]);
+	const [moistureSensors, setMoistureSensors] = useState(null);
+	const [notif, setNotif] = useState([]);
+	const [showNot, setShowNot] = useState(false);
 
 	// Fetch all plant documents from Firestore on render
-	const fetchData = async () => {
-		const tempArray = [];
-		const db = getFirestore();
-		const querySnapshot = await getDocs(
-			query(
-				collection(db, 'plants'),
-				where('userId', '==', getAuth().currentUser.uid)
-			)
-		);
-		querySnapshot.forEach((doc) => {
-			const dict = {
-				id: doc.id,
-				plantName: doc.get('plantName'),
-				plantImage: doc.get('plantImage'),
-				speciesId: doc.get('speciesId'),
-				statusId: doc.get('statusId'),
-				userId: doc.get('userId'),
-				moistureSensorId : doc.get('moistureSensorId'),
-				irrigatorId: doc.get('irrigatorId'),
-			};
-			tempArray.push(dict);
-		});
+	// const fetchData = async () => {
+	// 	const tempArray = [];
+	// 	const db = getFirestore();
+	// 	const querySnapshot = await getDocs(
+	// 		query(
+	// 			collection(db, 'plants'),
+	// 			where('userId', '==', getAuth().currentUser.uid)
+	// 		)
+	// 	);
+	// 	querySnapshot.forEach((doc) => {
+	// 		const dict = {
+	// 			id: doc.id,
+	// 			plantName: doc.get('plantName'),
+	// 			plantImage: doc.get('plantImage'),
+	// 			speciesId: doc.get('speciesId'),
+	// 			statusId: doc.get('statusId'),
+	// 			userId: doc.get('userId'),
+	// 			moistureSensorId : doc.get('moistureSensorId'),
+	// 			irrigatorId: doc.get('irrigatorId'),
+	// 		};
+	// 		tempArray.push(dict);
+	// 	});
 
-		setPlants(tempArray);
-	};
+	// 	setPlants(tempArray);
+	// };
 
 	useEffect(() => {
-		fetchData();
+		// fetchData();
+		const unsub = onSnapshot(query(collection(getFirestore(),'plants'),where('userId', '==', getAuth().currentUser.uid)), (querySnapshot) =>{
+			const tempArray = [];
+			querySnapshot.forEach((doc) => {
+				const dict = {
+					id: doc.id,
+					plantName: doc.get('plantName'),
+					plantImage: doc.get('plantImage'),
+					speciesId: doc.get('speciesId'),
+					statusId: doc.get('statusId'),
+					userId: doc.get('userId'),
+					moistureSensorId : doc.get('moistureSensorId'),
+					irrigatorId: doc.get('irrigatorId'),
+				};
+				tempArray.push(dict);
+			});
+			setPlants(tempArray);
+		});
+		return() => {
+			unsub()
+		}
 	}, []);
+
+	useEffect(()=>{
+		const unsub=onSnapshot(query(collection(getFirestore(),'moistureSensors')),(querySnapshot) =>{
+			setMoistureSensors(querySnapshot)
+		})
+		return () => {
+			unsub()
+		}
+	}, []);
+
+	// useEffect(() => {
+	// 	const setNotifs = async() => {
+	// 		setNotif([]);
+	// 		setShowNot(false)
+	// 		const db = getFirestore();
+	// 		plants.forEach((plant) =>{
+	// 			getDoc(doc(db,plant.speciesId))
+	// 			.then((docSnap) => {
+	// 				const ideal = docSnap.get('idealMoisture')
+	// 				getDoc(doc(db,'moistureSensors',plant.moistureSensorId))
+	// 				.then((sensorSnap)=>{
+	// 					const temp = 50 + (sensorSnap.get('moistureLevel') - ideal);
+	// 					if(temp<25){
+	// 						setShowNot(true);
+	// 						notif.push({
+	// 							plant: plant,
+	// 							id: plant.id,
+	// 							message: `${plant.plantName} is low on water`
+	// 						})
+	// 						setNotif(notif)
+	// 					} else if(temp>75){
+	// 						setShowNot(true);
+	// 						const data={
+	// 							plant: plant,
+	// 							id: plant.id,
+	// 							message: `${plant.plantName} has too much water`
+	// 						}
+	// 						notif.push(data)
+	// 						setNotif(notif)
+	// 					}
+	// 				}).then(() => {console.log('notifications', notif)})
+	// 			})
+	// 		})
+			
+	// 		// setNotif(notif);
+	// 	};
+
+	// 	setNotifs();
+	// },[])
+	
 
 	// Hook to refresh data when tab is focused in the app
-	useEffect(() => {
-		const unsubscribe = navigator.addListener('focus', () => {
-			// Handle callback here
-			fetchData();
-		});
-		return unsubscribe;
-	}, [navigator]);
+	// useEffect(() => {
+	// 	const unsubscribe = navigator.addListener('focus', () => {
+	// 		// Handle callback here
+	// 		fetchData();
+	// 	});
+	// 	return unsubscribe;
+	// }, [navigator]);
 
 	// Function to handle pull down to refresh
-	const onRefresh = useCallback(() => {
-		setRefreshing(true);
-		fetchData()
-			.then(() => setRefreshing(false))
-			.catch((error) => {
-				console.log('Refresh error: ', error);
-				setRefreshing(false);
-			});
-	}, []);
+	// const onRefresh = useCallback(() => {
+	// 	setRefreshing(true);
+	// 	// fetchData()
+	// 	setNotifs()
+	// 		.then(() => setRefreshing(false))
+	// 		.catch((error) => {
+	// 			console.log('Refresh error: ', error);
+	// 			setRefreshing(false);
+	// 		});
+	// }, []);
 
 	return (
 		<ScrollView
 			contentContainerStyle={styles.containermain}
-			refreshControl={
-				<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-			}
+			// refreshControl={
+			// 	<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+			// }
 		>
 			<View style={styles.notifSection}>
-				<Text style={[styles.subtitle, styles.noNotif]}>No New Notifications</Text>
+				{(showNot) ? (
+					notif.map((item) => {
+						<TouchableOpacity
+						style={styles.notificationCard}
+						key={item.id}
+						>
+							<Text>{item.message}</Text>
+						</TouchableOpacity>
+					})
+				) : (
+					<Text style={[styles.subtitle, styles.noNotif]}>No New Notifications</Text>
+				)}
 			</View>
 			<View style={styles.section}>
 				<View style={styles.uppercard}>
@@ -142,15 +230,15 @@ const styles = StyleSheet.create({
 		textDecorationLine: 'underline',
 		color: '#ffb74d',
 	},
-	notificationcard: {
-		backgroundColor: '#fcf8e3',
-		margin: 8,
-		borderColor: '#fbeed5',
-		borderWidth: 2,
-		borderRadius: 5,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
+	notificationCard: {
+		// backgroundColor: '#fcf8e3',
+		// margin: 8,
+		// borderColor: '#fbeed5',
+		// borderWidth: 2,
+		// borderRadius: 5,
+		// flexDirection: 'row',
+		// alignItems: 'center',
+		// justifyContent: 'center',
 	},
 	bottomcard: {
 		padding: 20,

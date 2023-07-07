@@ -19,7 +19,8 @@ import {
 	getFirestore,
 	updateDoc,
 	doc,
-	getDoc
+	getDoc,
+	onSnapshot,
 } from 'firebase/firestore';
 import {useRoute, useNavigation} from "@react-navigation/native";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -40,21 +41,97 @@ export default function Details({ navigation }){
     const { ogPlant } = route.params;
 	
 	useEffect(() => {
+		// async function fetchData(){
+		// 	const db = getFirestore()
+		// 	await getDoc(doc(db, ogPlant.speciesId))
+		// 	.then((docSnaphot) =>{
+		// 		setSpecies(docSnaphot.get('speciesName'))
+		// 		setIdealMoisture(docSnaphot.get('idealMoisture'))
+		// 		// Only pass concurrent values to avoid issues with states not being updated while rendering
+		// 		// getMoisture(docSnaphot.get('idealMoisture'))
+		// 	})
+		// }
+		
+		// if(ogPlant.moistureSensorId != ''){
+		// 	getDoc(doc(getFirestore(),'moistureSensors',ogPlant.moistureSensorId))
+		// 	.then((doc) => {
+		// 		setMoistureLevel(doc.get('moistureLevel'))
+		// 	})
+		// }
 		// Fetch data on render
-		fetchData();
+		// fetchData();
+		if(ogPlant.moistureSensorId != ''){
+			const unsub = onSnapshot(doc(getFirestore(),'moistureSensors',ogPlant.moistureSensorId), (docSnapshot) => {
+				setMoistureLevel(docSnapshot.get('moistureLevel'))
+				const temp = 50 + (moistureLevel - idealMoisture);
+		
+				// Set bar percentage to show moisture status for the sliding bar in the UI
+				if(temp<0){
+					setBarPercentage(0)	
+				} else if(temp>100){
+					setBarPercentage(100)
+				} else {
+					setBarPercentage(temp)
+				}
+			});
+			return () => {
+				unsub();
+				console.log("MyComponent is unmounting");
+			};
+		}
 	}, []);
 
-	// Fetch species name and moisture level using the speciesId from plant document
-	async function fetchData(){
-		const db = getFirestore()
-		await getDoc(doc(db, ogPlant.speciesId))
-		.then((docSnaphot) =>{
-			setSpecies(docSnaphot.get('speciesName'))
-			setIdealMoisture(docSnaphot.get('idealMoisture'))
-			// Only pass concurrent values to avoid issues with states not being updated while rendering
-			getMoisture(docSnaphot.get('idealMoisture'))
+	useEffect(()=>{
+		const unsubB = onSnapshot(doc(getFirestore(), ogPlant.speciesId),(docSnapshot) => {
+			setSpecies(docSnapshot.get('speciesName'))
+			setIdealMoisture(docSnapshot.get('idealMoisture'))
 		})
-	}
+		return () => {
+			unsubB();
+			console.log("MyComponent is unmounting");
+		};
+	},[])
+
+	// useEffect(() =>{
+	// 	if(ogPlant.moistureSensorId != ''){
+	// 		const unsub = onSnapshot(doc(getFirestore(),'moistureSensors',ogPlant.moistureSensorId), (docSnapshot) => {
+	// 			setMoistureLevel(docSnapshot.get('moistureLevel'))
+	// 		});
+	// 		return () => {
+	// 			unsub()
+	// 		};
+	// 	}
+	// },[])
+
+	// Fetch species name and moisture level using the speciesId from plant document
+
+	useEffect(() => {
+		console.log('set percentage')
+		const temp = 50 + (moistureLevel - idealMoisture);
+		
+		// Set bar percentage to show moisture status for the sliding bar in the UI
+		if(temp<0){
+			setBarPercentage(0)	
+		} else if(temp>100){
+			setBarPercentage(100)
+		} else {
+			setBarPercentage(temp)
+		}
+	}, [moistureLevel])
+
+	useEffect(() => {
+		console.log('set percentage')
+		const temp = 50 + (moistureLevel - idealMoisture);
+		
+		// Set bar percentage to show moisture status for the sliding bar in the UI
+		if(temp<0){
+			setBarPercentage(0)	
+		} else if(temp>100){
+			setBarPercentage(100)
+		} else {
+			setBarPercentage(temp)
+		}
+	}, [])
 
 	// Get current plant moisture level using moistureSensorId from plant document
 	async function getMoisture(idealMoisture){
@@ -88,7 +165,7 @@ export default function Details({ navigation }){
 		updateDoc(doc(db,'moistureSensors',ogPlant.moistureSensorId),{
 			moistureLevel: newLevel
 		})
-		getMoisture(idealMoisture);
+		// getMoisture(idealMoisture);
 	}
 
 	// Function to handle pull down to refresh
@@ -102,10 +179,24 @@ export default function Details({ navigation }){
 			});
 	}, []);
 
+	// Hook to refresh data when tab is focused in the app
+	// useEffect(() => {
+	// 	const unsubscribe = navigator.addListener('focus', () => {
+	// 		// Handle callback here
+	// 		if(ogPlant.moistureSensorId != ''){
+	// 			getDoc(doc(getFirestore(),'moistureSensors',ogPlant.moistureSensorId))
+	// 			.then((doc) => {
+	// 				setMoistureLevel(doc.get('moistureLevel'))
+	// 			})
+	// 		}
+	// 	});
+	// 	return unsubscribe;
+	// }, [navigator]);
+
     return (
-        <ScrollView refreshControl={
-			<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-		}>
+        <ScrollView 
+		// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+		>
 			<View style={styles.container}>
 				<View style={styles.section}>
 					<Image style={styles.image} source={{ uri: ogPlant.plantImage }} />

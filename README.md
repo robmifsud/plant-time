@@ -1,6 +1,8 @@
-# CIS3189-Mobile-Device-Programming
+# PlantTime
 
 ## Team 2
+Original dev team, further changes made by myself (robmifsud).
+
 Adam Ruggier - **adamrugg**
 
 Luke Chen - **lluke-chen**
@@ -13,14 +15,10 @@ Robert Mifsud - **robmifsud**
 PlantTime is a mobile application which allows users to monitor and water their plants.
 
 ## Build
-This project should be built using a development build or standalone build. This project cannot be loaded using Expo Go as this application does not work with Firebase packages.
+This project can be built and tested using Expo Go on ios or android. The server can be started as follows:
 ```
-eas build --profile development --platform android
-```
-```
-npx expo start --dev-client
+npx expo start
 ```
 
 ## Data Schema
 ![Data Schema](./TestProject/assets/images/DataSchema.png)
-

@@ -1,12 +1,13 @@
 General Functionality:
-    ☐ Details page
+    ✔ Details page @done (1/26/2023, 2:15:12 AM)
     ✔ Add irrigator @done (1/25/2023, 3:33:31 AM)
-    ☐ Subsystem to decrease moisture values over time
+    ✔ Subsystem to decrease moisture values over time @done (1/26/2023, 3:03:23 AM)
     ☐ Figure out notifications
-    ☐ Comments
+    ✔ Comments @done (1/26/2023, 2:14:40 AM)
     ✔ Change sensor/irrigator text if already present @done (1/25/2023, 3:52:41 AM)
-    ☐ Add more species with soil values
+    ✔ Add more species with soil values @done (1/26/2023, 2:14:38 AM)
     ☐ Remove ugly yellow banners (debugging)
+    ☐ Tune starting moisture levels
     ☐ Fix landing page vertical margins
     ☐ Add Conrad to repo (or public?)
 
@@ -20,7 +21,7 @@ Details page:
     ☐ Toggle auto: maitain moisture automatically
 
 General UI:
-    ☐ Change styling when screens are empty.
+    ☐ Change styling when screens are empty?
 
 Home Screen:
     ☐ Notifications
