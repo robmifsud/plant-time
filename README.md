@@ -16,12 +16,12 @@ PlantTime is a mobile application which allows users to monitor and water their 
 
 ## Screen Grabs
 <p style='display: flex; direction: row; width: 100%; gap: 5px;'>
-    <img src='./screen%20grabs/login.png'> 
-    <img src='./screen%20grabs/all-plants.png'>
-    <img src='./screen%20grabs/add-plant.png'>
-    <img src='./screen%20grabs/add-irrigator.png'>
-    <img src='./screen%20grabs/lavendar.png'>
-    <img src='./screen%20grabs/faq.png'>
+    <img src='./screen%20grabs/login.png' width=130> 
+    <img src='./screen%20grabs/all-plants.png' width=130>
+    <img src='./screen%20grabs/add-plant.png' width=130>
+    <img src='./screen%20grabs/add-irrigator.png' width=130>
+    <img src='./screen%20grabs/lavendar.png' width=130>
+    <img src='./screen%20grabs/faq.png' width=130>
 <p>
 
 ## Build
